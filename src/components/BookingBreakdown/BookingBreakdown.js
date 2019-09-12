@@ -10,10 +10,12 @@ import {
   propTypes,
   LINE_ITEM_CUSTOMER_COMMISSION,
   LINE_ITEM_PROVIDER_COMMISSION,
+  DATE_TYPE_DATE,
+  DATE_TYPE_DATETIME,
 } from '../../util/types';
 
-import LineItemUnitPriceMaybe from './LineItemUnitPriceMaybe';
 import LineItemBookingPeriod from './LineItemBookingPeriod';
+import LineItemBasePriceMaybe from './LineItemBasePriceMaybe';
 import LineItemUnitsMaybe from './LineItemUnitsMaybe';
 import LineItemSubTotalMaybe from './LineItemSubTotalMaybe';
 import LineItemCustomerCommissionMaybe from './LineItemCustomerCommissionMaybe';
@@ -27,7 +29,16 @@ import LineItemUnknownItemsMaybe from './LineItemUnknownItemsMaybe';
 import css from './BookingBreakdown.css';
 
 export const BookingBreakdownComponent = props => {
-  const { rootClassName, className, userRole, unitType, transaction, booking, intl } = props;
+  const {
+    rootClassName,
+    className,
+    userRole,
+    unitType,
+    transaction,
+    booking,
+    intl,
+    dateType,
+  } = props;
 
   const isCustomer = userRole === 'customer';
   const isProvider = userRole === 'provider';
@@ -42,10 +53,11 @@ export const BookingBreakdownComponent = props => {
 
   return (
     <div className={classes}>
-      <LineItemUnitPriceMaybe transaction={transaction} unitType={unitType} intl={intl} />
-      <LineItemBookingPeriod transaction={transaction} booking={booking} unitType={unitType} />
+      <LineItemBookingPeriod booking={booking} unitType={unitType} dateType={dateType} />
+      <hr className={css.totalDivider} />
       <LineItemUnitsMaybe transaction={transaction} unitType={unitType} />
 
+      <LineItemBasePriceMaybe transaction={transaction} unitType={unitType} intl={intl} />
       <LineItemUnknownItemsMaybe transaction={transaction} intl={intl} />
 
       <LineItemSubTotalMaybe
@@ -89,7 +101,7 @@ export const BookingBreakdownComponent = props => {
   );
 };
 
-BookingBreakdownComponent.defaultProps = { rootClassName: null, className: null };
+BookingBreakdownComponent.defaultProps = { rootClassName: null, className: null, dateType: null };
 
 BookingBreakdownComponent.propTypes = {
   rootClassName: string,
@@ -99,6 +111,7 @@ BookingBreakdownComponent.propTypes = {
   unitType: propTypes.bookingUnitType.isRequired,
   transaction: propTypes.transaction.isRequired,
   booking: propTypes.booking.isRequired,
+  dateType: oneOf([DATE_TYPE_DATE, DATE_TYPE_DATETIME]),
 
   // from injectIntl
   intl: intlShape.isRequired,
