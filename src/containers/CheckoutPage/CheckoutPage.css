@@ -299,6 +299,8 @@
 
 .detailsHeadings {
   display: none;
+  padding-bottom: 16px;
+  padding-top: 0px;
 
   @media (--viewportLarge) {
     display: block;
@@ -307,11 +309,10 @@
 }
 
 .detailsTitle {
-  margin-bottom: 10px;
+  margin-bottom: 2px;
 
   @media (--viewportLarge) {
     margin-top: 17px;
-    margin-bottom: 9px;
   }
 }
 
