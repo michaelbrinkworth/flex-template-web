@@ -73,10 +73,10 @@ class MainPanel extends Component {
     const secondaryFilterParamNames = secondaryFilters
       ? Object.values(secondaryFilters).map(f => f.paramName)
       : [];
-  
+
     return (
       <div className={classes}>
-         {/* <div className={css.mapIcon} onClick={onMapIconClick}>
+        {/* <div className={css.mapIcon} onClick={onMapIconClick}>
             <FormattedMessage id="SearchFilters.openMapView" className={css.mapIconText} />
           </div> */}
         <SearchFilters
@@ -91,7 +91,7 @@ class MainPanel extends Component {
           onManageDisableScrolling={onManageDisableScrolling}
           {...searchFiltersPanelProps}
           {...extractKeys(primaryFilters)}
-        />        
+        />
         <SearchFiltersMobile
           className={css.searchFiltersMobile}
           urlQueryParams={urlQueryParams}
@@ -111,7 +111,7 @@ class MainPanel extends Component {
           {...primaryFilters}
           {...secondaryFilters}
         />
-       
+
         {isSearchFiltersPanelOpen ? (
           <div className={classNames(css.searchFiltersPanel)}>
             <SearchFiltersPanel
@@ -179,14 +179,13 @@ MainPanel.propTypes = {
   secondaryFilters: objectOf(propTypes.filterConfig),
 };
 
-const extractKeys = (obj) => {
+const extractKeys = obj => {
   let returnedObject = {};
-  Object.keys(obj)
-             .forEach(k => {
-                if(k === 'keywordFilter') return;
-                returnedObject[k] = obj[k];
-           });
-    return returnedObject;
-}
+  Object.keys(obj).forEach(k => {
+    if (k === 'keywordFilter') return;
+    returnedObject[k] = obj[k];
+  });
+  return returnedObject;
+};
 
 export default MainPanel;

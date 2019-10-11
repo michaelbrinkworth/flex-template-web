@@ -133,23 +133,7 @@ export class SearchPageComponent extends Component {
       history.push(createResourceLocatorString('SearchPage', routes, {}, searchParams));
     }
   }
-  updateTypes = (props) => {
-   
-    if(props.urlQueryParams.pub_category && props.urlQueryParams.pub_types){
-      const { pub_category, pub_types} = props.urlQueryParams;
-      if(!pub_category || !pub_types) return;
-      pub_types === "Traditional,Open-Air" && pub_category === "Photo Booth" ? 
-      ( this.filterTypes(props.typesFilter) ) : this.props.types = {...this.props.types}
-    } 
-    return;
-  }
-
-  filterTypes = (types) => {
-    const newTypes = types.options
-     .filter(typ => typ.key === "Open-Air" || typ.key === "Traditional" );
-     
-     this.props.types = newTypes;
-  }
+  
 
   // Invoked when a modal is opened from a child component,
   // for example when a filter modal is opened in mobile view
@@ -185,7 +169,7 @@ export class SearchPageComponent extends Component {
     });
 
     const filters = this.filters();
-
+    let updateTypes;
     
 
     // urlQueryParams doesn't contain page specific url params
