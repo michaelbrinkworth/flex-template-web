@@ -124,6 +124,7 @@ class SelectMultipleFilter extends Component {
         {...rest}
       >
         <GroupOfFieldCheckboxes
+          onSubmit={handleSubmit}
           className={css.fieldGroup}
           name={name}
           id={`${id}-checkbox-group`}
@@ -146,6 +147,7 @@ class SelectMultipleFilter extends Component {
       >
         <GroupOfFieldCheckboxes
           className={css.fieldGroupPlain}
+          onSubmit={handleSubmit}
           name={name}
           id={`${id}-checkbox-group`}
           options={options}
