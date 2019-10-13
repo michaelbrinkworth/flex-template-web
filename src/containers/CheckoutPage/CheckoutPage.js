@@ -8,7 +8,7 @@ import classNames from 'classnames';
 import config from '../../config';
 import routeConfiguration from '../../routeConfiguration';
 import { pathByRouteName, findRouteByRouteName } from '../../util/routes';
-import { propTypes, LINE_ITEM_NIGHT, LINE_ITEM_DAY, DATE_TYPE_DATE } from '../../util/types';
+import { propTypes, LINE_ITEM_NIGHT, LINE_ITEM_DAY, DATE_TYPE_DATE, LINE_ITEM_DELIVERY_FEE } from '../../util/types';
 import {
   ensureListing,
   ensureCurrentUser,
@@ -55,6 +55,10 @@ import {
 } from './CheckoutPage.duck';
 import { storeData, storedData, clearData } from './CheckoutPageSessionHelpers';
 import css from './CheckoutPage.css';
+import { nightsBetween, daysBetween } from '../../util/dates';
+import { types as sdkTypes } from '../../util/sdkLoader';
+
+const { Money } = sdkTypes;
 
 const STORAGE_KEY = 'CheckoutPage';
 
@@ -110,11 +114,54 @@ export class CheckoutPageComponent extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+
+
+
+  customPricingParams(params) {
+    const { bookingStart, bookingEnd, listing, deliveryFee, ...rest } = params;
+    const { amount, currency } = listing.attributes.price;
+
+    const unitType = config.bookingUnitType;
+    const isNightly = unitType === LINE_ITEM_NIGHT;
+
+    const quantity = isNightly
+      ? nightsBetween(bookingStart, bookingEnd)
+      : daysBetween(bookingStart, bookingEnd);
+
+      const deliveryFeeLineItem = deliveryFee
+    ? {
+        code: LINE_ITEM_DELIVERY_FEE,
+        unitPrice: deliveryFee,
+        quantity: 1,
+      }
+    : null;
+
+    const deliveryFeeLineItemMaybe = deliveryFeeLineItem ? [deliveryFeeLineItem] : [];
+
+    return {
+      listingId: listing.id,
+      bookingStart,
+      bookingEnd,
+      lineItems: [
+        {
+          code: unitType,
+          unitPrice: new Money(amount, currency),
+          quantity,
+        },
+      ],
+      ...rest,
+    };
+  }
+
+
   componentDidMount() {
     if (window) {
       this.loadInitialData();
     }
   }
+
+
+
 
   /**
    * Load initial data for the page
@@ -138,6 +185,7 @@ export class CheckoutPageComponent extends Component {
       bookingDates,
       listing,
       transaction,
+      deliveryFee,
       fetchSpeculatedTransaction,
       fetchStripeCustomer,
       history,
@@ -191,12 +239,19 @@ export class CheckoutPageComponent extends Component {
       // Fetch speculated transaction for showing price in booking breakdown
       // NOTE: if unit type is line-item/units, quantity needs to be added.
       // The way to pass it to checkout page is through pageData.bookingData
-      fetchSpeculatedTransaction({
-        listingId,
-        bookingStart: bookingStartForAPI,
-        bookingEnd: bookingEndForAPI,
-      });
+
+      const deliveryFee = pageData.bookingData.deliveryFee;
+
+      fetchSpeculatedTransaction(
+        this.customPricingParams({
+          listing,
+          bookingStart: bookingStartForAPI,
+          bookingEnd: bookingEndForAPI,
+          deliveryFee,
+        })
+      );
     }
+
 
     this.setState({ pageData: pageData || {}, dataLoaded: true });
   }
@@ -358,6 +413,7 @@ export class CheckoutPageComponent extends Component {
     // Create order aka transaction
     // NOTE: if unit type is line-item/units, quantity needs to be added.
     // The way to pass it to checkout page is through pageData.bookingData
+
     const tx = speculatedTransaction ? speculatedTransaction : storedTx;
 
     // Note: optionalPaymentParams contains Stripe paymentMethod,
@@ -385,6 +441,24 @@ export class CheckoutPageComponent extends Component {
       return;
     }
     this.setState({ submitting: true });
+
+    const deliveryFeeLineItem = speculatedTransaction.attributes.lineItems.find(
+      item => item.code === LINE_ITEM_DELIVERY_FEE
+    );
+    const deliveryFee = deliveryFeeLineItem
+      ? deliveryFeeLineItem.unitPrice
+      : null;
+
+    const requestParams = this.customPricingParams({
+      listing: this.state.pageData.listing,
+      cardToken: 'CheckoutPage_speculative_card_token',
+      bookingStart: speculatedTransaction.booking.attributes.start,
+      bookingEnd: speculatedTransaction.booking.attributes.end,
+      deliveryFee,
+    });
+
+
+
 
     const { history, speculatedTransaction, currentUser, paymentIntent, dispatch } = this.props;
     const { card, message, paymentMethod, formValues } = values;
@@ -433,6 +507,8 @@ export class CheckoutPageComponent extends Component {
       selectedPaymentMethod: paymentMethod,
       saveAfterOnetimePayment: !!saveAfterOnetimePayment,
     };
+
+
 
     this.handlePaymentIntent(requestPaymentParams)
       .then(res => {

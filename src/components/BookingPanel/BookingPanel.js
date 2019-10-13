@@ -13,9 +13,15 @@ import { ModalInMobile, Button } from '../../components';
 import { BookingDatesForm } from '../../forms';
 
 import css from './BookingPanel.css';
+import { types as sdkTypes } from '../../util/sdkLoader';
+const { Money } = sdkTypes;
+
 
 // This defines when ModalInMobile shows content as Modal
 const MODAL_BREAKPOINT = 1023;
+
+
+
 
 const priceData = (price, intl) => {
   if (price && price.currency === config.currency) {
@@ -29,6 +35,9 @@ const priceData = (price, intl) => {
   }
   return {};
 };
+
+
+
 
 const openBookModal = (isOwnListing, isClosed, history, location) => {
   if (isOwnListing || isClosed) {
@@ -67,6 +76,15 @@ const BookingPanel = props => {
     intl,
   } = props;
 
+  //
+  // const deliveryFeeData = listing.attributes.publicData.deliveryFee;
+  // const { amount: deliveryAmount, currency: deliveryCurrency } =
+  //   deliveryFeeData || {};
+  // const deliveryFee =
+  //   deliveryAmount && deliveryCurrency
+  //     ? new Money(deliveryAmount, deliveryCurrency)
+  //     : null;
+
   const price = listing.attributes.price;
   const hasListingState = !!listing.attributes.state;
   const isClosed = hasListingState && listing.attributes.state === LISTING_STATE_CLOSED;
@@ -74,6 +92,19 @@ const BookingPanel = props => {
   const showClosedListingHelpText = listing.id && isClosed;
   const { formattedPrice, priceTitle } = priceData(price, intl);
   const isBook = !!parse(location.search).book;
+
+  // const handleSubmit = values => {
+  //   const selectedDeliveryFee =
+  //     values &&
+  //     values.additionalItems &&
+  //     values.additionalItems[0] === 'deliveryFee'
+  //       ? deliveryFee
+  //       : null;
+  //   onSubmit({
+  //     ...values,
+  //     deliveryFee: selectedDeliveryFee,
+  //   });
+  // };
 
   const subTitleText = !!subTitle
     ? subTitle
@@ -92,6 +123,7 @@ const BookingPanel = props => {
 
   const classes = classNames(rootClassName || css.root, className);
   const titleClasses = classNames(titleClassName || css.bookingTitle);
+
 
   return (
     <div className={classes}>
@@ -125,6 +157,7 @@ const BookingPanel = props => {
             isOwnListing={isOwnListing}
             timeSlots={timeSlots}
             fetchTimeSlotsError={fetchTimeSlotsError}
+            // deliveryFee={deliveryFee}
           />
         ) : null}
       </ModalInMobile>
@@ -154,6 +187,7 @@ const BookingPanel = props => {
     </div>
   );
 };
+
 
 BookingPanel.defaultProps = {
   rootClassName: null,

@@ -12,7 +12,8 @@
     {:name :action/calculate-tx-nightly-total-price}
     {:name :action/calculate-tx-provider-commission,
      :config {:commission 0.1M}}
-    {:name :action/stripe-create-payment-intent}],
+     {:name :action/stripe-create-payment-intent},
+     {:name :action/set-line-items-and-total}],
    :to :state/pending-payment}
   {:name :transition/request-payment-after-enquiry,
    :actor :actor.role/customer,
@@ -22,7 +23,8 @@
     {:name :action/calculate-tx-nightly-total-price}
     {:name :action/calculate-tx-provider-commission,
      :config {:commission 0.1M}}
-    {:name :action/stripe-create-payment-intent}],
+     {:name :action/stripe-create-payment-intent},
+     {:name :action/set-line-items-and-total}],
    :from :state/enquiry,
    :to :state/pending-payment}
   {:name :transition/expire-payment,

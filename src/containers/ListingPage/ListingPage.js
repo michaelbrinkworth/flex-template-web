@@ -233,8 +233,9 @@ export class ListingPageComponent extends Component {
       geolocation = null,
       price = null,
       title = '',
-      publicData,
+      publicData
     } = currentListing.attributes;
+
 
     const richTitle = (
       <span>
@@ -334,6 +335,8 @@ export class ListingPageComponent extends Component {
         this.handleSubmit(values);
       }
     };
+
+
 
     const listingImages = (listing, variantName) =>
       (listing.images || [])
@@ -473,6 +476,7 @@ export class ListingPageComponent extends Component {
     );
   }
 }
+
 
 ListingPageComponent.defaultProps = {
   unitType: config.bookingUnitType,

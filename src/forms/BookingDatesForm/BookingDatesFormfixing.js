@@ -13,7 +13,10 @@ import { Form, PrimaryButton, FieldDateRangeInput, FieldCheckbox, } from '../../
 import { formatMoney } from '../../util/currency';
 import EstimatedBreakdownMaybe from './EstimatedBreakdownMaybe';
 
+
+
 import css from './BookingDatesForm.css';
+
 
 const identity = v => v;
 
@@ -47,6 +50,8 @@ export class BookingDatesFormComponent extends Component {
       this.props.onSubmit(e);
     }
   }
+
+
 
   render() {
     const { rootClassName, className, price: unitPrice, ...rest } = this.props;
@@ -84,7 +89,6 @@ export class BookingDatesFormComponent extends Component {
             handleSubmit,
             intl,
             isOwnListing,
-            deliveryFee,
             submitButtonWrapperClassName,
             unitPrice,
             unitType,
@@ -92,17 +96,17 @@ export class BookingDatesFormComponent extends Component {
             timeSlots,
             fetchTimeSlotsError,
           } = fieldRenderProps;
-          const { startDate, endDate } = values && values.bookingDates ? values.bookingDates : {};
           const selectedDeliveryFee =
-          values &&
-          values.additionalItems &&
-          values.additionalItems.find(i => i === 'deliveryFee')
-            ? deliveryFee
-            : null;
+              values &&
+              values.additionalItems &&
+              values.additionalItems.find(i => i === 'deliveryFee')
+                ? deliveryFee
+                : null;
 
-            const deliveryFeeLabel = intl.formatMessage({
+
+        const deliveryFeeLabel = intl.formatMessage({
               id: 'BookingDatesForm.deliveryFee',
-            })
+                });
           const bookingStartLabel = intl.formatMessage({
             id: 'BookingDatesForm.bookingStartTitle',
           });
@@ -114,15 +118,34 @@ export class BookingDatesFormComponent extends Component {
           const endDateErrorMessage = intl.formatMessage({
             id: 'FieldDateRangeInput.invalidEndDate',
           });
+
+
+
+
+          const { startDate, endDate } = values && values.bookingDates ? values.bookingDates : {};
+
+
           const timeSlotsError = fetchTimeSlotsError ? (
             <p className={css.timeSlotsError}>
               <FormattedMessage id="BookingDatesForm.timeSlotsError" />
             </p>
           ) : null;
 
+
           // This is the place to collect breakdown estimation data. See the
           // EstimatedBreakdownMaybe component to change the calculations
           // for customized payment processes.
+
+
+          const bookingInfo = bookingData ? (
+            <div className={css.priceBreakdownContainer}>
+              <h3 className={css.priceBreakdownTitle}>
+                <FormattedMessage id="BookingDatesForm.priceBreakdownTitle" />
+              </h3>
+              <EstimatedBreakdownMaybe bookingData={bookingData} />
+            </div>
+          ) : null;
+
           const bookingData =
             startDate && endDate
               ? {
@@ -137,14 +160,7 @@ export class BookingDatesFormComponent extends Component {
                   deliveryFee: selectedDeliveryFee,
                 }
               : null;
-          const bookingInfo = bookingData ? (
-            <div className={css.priceBreakdownContainer}>
-              <h3 className={css.priceBreakdownTitle}>
-                <FormattedMessage id="BookingDatesForm.priceBreakdownTitle" />
-              </h3>
-              <EstimatedBreakdownMaybe bookingData={bookingData} />
-            </div>
-          ) : null;
+
 
           const dateFormatOptions = {
             weekday: 'short',
@@ -165,6 +181,9 @@ export class BookingDatesFormComponent extends Component {
           const submitButtonClasses = classNames(
             submitButtonWrapperClassName || css.submitButtonWrapper
           );
+
+
+
 
           return (
             <Form onSubmit={handleSubmit} className={classes}>
@@ -189,19 +208,19 @@ export class BookingDatesFormComponent extends Component {
                   bookingDatesRequired(startDateErrorMessage, endDateErrorMessage)
                 )}
               />
-                {deliveryFee ? (
-              <div className={css.deliveryFee}>
-                <FieldCheckbox
-                  className={css.deliveryFeeLabel}
-                  id={`${formId}.deliveryFee`}
-                  label={deliveryFeeLabel}
-                  name={'additionalItems'}
-                  value={'deliveryFee'}
-                />
-                <span className={css.deliveryFeeAmount}>{formatMoney(intl, deliveryFee)}</span>
-              </div>
-            ) : null}
-            />
+              {deliveryFee ? (
+                <div className={css.deliveryFee}>
+                  <FieldCheckbox
+                    className={css.deliveryFeeLabel}
+                    id={`${form}.deliveryFee`}
+                    label={deliveryFeeLabel}
+                    name={'additionalItems'}
+                    value={'deliveryFee'}
+                  />
+                  <span className={css.deliveryFeeAmount}>{formatMoney(intl, deliveryFee)}</span>
+                </div>
+              ) : null}
+              />
               {bookingInfo}
               <p className={css.smallPrint}>
                 <FormattedMessage
