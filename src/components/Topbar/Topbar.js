@@ -17,7 +17,6 @@ import {
   ModalMissingInformation,
   NamedLink,
   TopbarDesktop,
-  KeywordFilter,
   TopbarMobileMenu,
 } from '../../components';
 import { TopbarSearchForm } from '../../forms';
@@ -76,7 +75,6 @@ class TopbarComponent extends Component {
     this.handleMobileSearchOpen = this.handleMobileSearchOpen.bind(this);
     this.handleMobileSearchClose = this.handleMobileSearchClose.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleSubmitCustom = this.handleSubmitCustom.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
   }
 
@@ -128,17 +126,6 @@ class TopbarComponent extends Component {
     });
   }
 
-  handleSubmitCustom(values) {
-    const { currentSearchParams } = this.props;
-    const keywords = values.keywords;
-    const { history } = this.props;
-    const searchParams = {
-      ...currentSearchParams,
-      keywords,
-    };
-    history.push(createResourceLocatorString('SearchPage', routeConfiguration(), {}, searchParams));
-  }
-
   render() {
     const {
       className,
@@ -161,7 +148,6 @@ class TopbarComponent extends Component {
       sendVerificationEmailInProgress,
       sendVerificationEmailError,
       showGenericError,
-      keywordFilter
     } = this.props;
 
     const { mobilemenu, mobilesearch, address, origin, bounds } = parse(location.search, {
@@ -200,7 +186,7 @@ class TopbarComponent extends Component {
     };
 
     const classes = classNames(rootClassName || css.root, className);
-    
+
     return (
       <div className={classes}>
         <div className={classNames(mobileRootClassName || css.container, mobileClassName)}>
@@ -224,7 +210,7 @@ class TopbarComponent extends Component {
             onClick={this.handleMobileSearchOpen}
             title={intl.formatMessage({ id: 'Topbar.searchIcon' })}
           >
-            {/* <SearchIcon className={css.searchMenuIcon} /> */}
+            <SearchIcon className={css.searchMenuIcon} />
           </Button>
         </div>
         <div className={css.desktop}>
@@ -238,8 +224,7 @@ class TopbarComponent extends Component {
             isAuthenticated={isAuthenticated}
             notificationCount={notificationCount}
             onLogout={this.handleLogout}
-            onSearchSubmit={this.handleSubmitCustom}
-            keywordFilter
+            onSearchSubmit={this.handleSubmit}
           />
         </div>
         <Modal
@@ -258,12 +243,11 @@ class TopbarComponent extends Component {
           onManageDisableScrolling={onManageDisableScrolling}
         >
           <div className={css.searchContainer}>
-            {/* <TopbarSearchForm
+            <TopbarSearchForm
               onSubmit={this.handleSubmit}
               initialValues={initialSearchFormValues}
               isMobile
-            /> */}
-
+            />
             <p className={css.mobileHelp}>
               <FormattedMessage id="Topbar.mobileSearchHelp" />
             </p>

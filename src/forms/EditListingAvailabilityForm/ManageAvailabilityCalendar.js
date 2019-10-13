@@ -137,10 +137,9 @@ const findException = (exceptions, day) => {
 
 const isBlocked = (availabilityPlan, exception, date) => {
   const planEntries = ensureDayAvailabilityPlan(availabilityPlan).entries;
-  const planEntry = planEntries.find(
+  const seatsFromPlan = planEntries.find(
     weekDayEntry => weekDayEntry.dayOfWeek === DAYS_OF_WEEK[date.isoWeekday() - 1]
-  );
-  const seatsFromPlan = planEntry ? planEntry.seats : 0;
+  ).seats;
 
   const seatsFromException =
     exception && ensureAvailabilityException(exception.availabilityException).attributes.seats;
