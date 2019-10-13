@@ -13,13 +13,8 @@ import {
   MenuContent,
   MenuItem,
   NamedLink,
-  KeywordFilter, 
 } from '../../components';
-
-import { createResourceLocatorString } from '../../util/routes';
-import routeConfiguration from '../../routeConfiguration';
-import omit from 'lodash/omit';
-import { TopbarSearchForm, CustomSearchForm } from '../../forms';
+import { TopbarSearchForm } from '../../forms';
 
 import css from './TopbarDesktop.css';
 
@@ -34,20 +29,11 @@ const TopbarDesktop = props => {
     intl,
     isAuthenticated,
     onLogout,
-    keywordFilter,
     onSearchSubmit,
     initialSearchFormValues,
   } = props;
   const [mounted, setMounted] = useState(false);
 
-const handleKeyword =(urlParam, keywords) => {
-    const { urlQueryParams, history } = props;
-    const queryParams = urlParam
-      ? { ...urlQueryParams, [urlParam]: keywords }
-      : omit(urlQueryParams, urlParam);
-
-    history.push(createResourceLocatorString('SearchPage', routeConfiguration(), {}, queryParams));
- }
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -57,36 +43,14 @@ const handleKeyword =(urlParam, keywords) => {
 
   const classes = classNames(rootClassName || css.root, className);
 
-  // const search = (
-  //   <TopbarSearchForm
-  //     className={css.searchLink}
-  //     desktopInputRoot={css.topbarSearchWithLeftPadding}
-  //     onSubmit={onSearchSubmit}
-  //     initialValues={initialSearchFormValues}
-  //   />
-  // );
-  const keywordLabel = intl.formatMessage({
-      id: 'SearchFiltersMobile.keywordLabel',
-    });
-
-  // const search = 
-  //        <KeywordFilter
-  //         id={'SearchFiltersMobile.keywordFilter'}
-  //         name="keyword"
-  //         urlParam={keywordFilter.paramName}
-  //         label={keywordLabel}
-  //         onSubmit={handleKeyword}
-  //         liveEdit
-  //         showAsPopup={false}
-  //         initialValues={''}
-  //       />
-  const search =
-          <CustomSearchForm
-            className={css.searchLink}
-            desktopInputRoot={css.topbarSearchWithLeftPadding}
-            onSubmit={onSearchSubmit}
-            initialValues={initialSearchFormValues}
-          />   
+  const search = (
+    <TopbarSearchForm
+      className={css.searchLink}
+      desktopInputRoot={css.topbarSearchWithLeftPadding}
+      onSubmit={onSearchSubmit}
+      initialValues={initialSearchFormValues}
+    />
+  );
 
   const notificationDot = notificationCount > 0 ? <div className={css.notificationDot} /> : null;
 

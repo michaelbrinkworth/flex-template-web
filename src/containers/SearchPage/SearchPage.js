@@ -41,7 +41,6 @@ export class SearchPageComponent extends Component {
     this.state = {
       isSearchMapOpenOnMobile: props.tab === 'map',
       isMobileModalOpen: false,
-      isCustomClick: false,
     };
 
     this.searchMapListingsInProgress = false;
@@ -61,7 +60,7 @@ export class SearchPageComponent extends Component {
       dateRangeFilterConfig,
       keywordFilterConfig,
     } = this.props;
-   
+
     // Note: "category" and "amenities" filters are not actually filtering anything by default.
     // Currently, if you want to use them, we need to manually configure them to be available
     // for search queries. Read more from extended data document:
@@ -133,7 +132,6 @@ export class SearchPageComponent extends Component {
       history.push(createResourceLocatorString('SearchPage', routes, {}, searchParams));
     }
   }
-  
 
   // Invoked when a modal is opened from a child component,
   // for example when a filter modal is opened in mobile view
@@ -144,10 +142,10 @@ export class SearchPageComponent extends Component {
   // Invoked when a modal is closed from a child component,
   // for example when a filter modal is opened in mobile view
   onCloseMobileModal() {
-    this.setState({ isMobileModalOpen: false , isCustomClick:false});
+    this.setState({ isMobileModalOpen: false });
   }
 
-  render() {    
+  render() {
     const {
       intl,
       listings,
@@ -169,8 +167,6 @@ export class SearchPageComponent extends Component {
     });
 
     const filters = this.filters();
-    let updateTypes;
-    
 
     // urlQueryParams doesn't contain page specific url params
     // like mapSearch, page or origin (origin depends on config.sortSearchByDistance)
@@ -186,12 +182,11 @@ export class SearchPageComponent extends Component {
     const isWindowDefined = typeof window !== 'undefined';
     const isMobileLayout = isWindowDefined && window.innerWidth < MODAL_BREAKPOINT;
     const shouldShowSearchMap =
-      !false || (true && this.state.isSearchMapOpenOnMobile);
+      !isMobileLayout || (isMobileLayout && this.state.isSearchMapOpenOnMobile);
 
     const onMapIconClick = () => {
       this.useLocationSearchBounds = true;
-      this.setState({ isSearchMapOpenOnMobile: true }); 
-      this.setState( {isCustomClick: true});
+      this.setState({ isSearchMapOpenOnMobile: true });
     };
 
     const { address, bounds, origin } = searchInURL || {};
@@ -213,16 +208,13 @@ export class SearchPageComponent extends Component {
         title={title}
         schema={schema}
       >
-      <TopbarContainer
+        <TopbarContainer
         onOpenSearchN={() => { this.onOpenMobileModal()}}
           className={topbarClasses}
           currentPage="SearchPage"
-          history
-          urlQueryParams={validQueryParams}
-          keywordFilter={filters.keywordFilter}
           currentSearchParams={urlQueryParams}
-      />
-      <div className={css.container}>
+        />
+        <div className={css.container}>
           <MainPanel
           customState={this.state.isMobileModalOpen}
             urlQueryParams={validQueryParams}
@@ -238,10 +230,6 @@ export class SearchPageComponent extends Component {
             pagination={pagination}
             searchParamsForPagination={parse(location.search)}
             showAsModalMaxWidth={MODAL_BREAKPOINT}
-            location
-            history
-            updateTypes={this.updateTypes}
-            currentSearchParams={urlQueryParams}
             primaryFilters={{
               categoryFilter: filters.categoryFilter,
               typesFilter: filters.typesFilter,
@@ -249,13 +237,12 @@ export class SearchPageComponent extends Component {
               dateRangeFilter: filters.dateRangeFilter,
               keywordFilter: filters.keywordFilter,
             }}
-        />
+          />
           <ModalInMobile
             className={css.mapPanel}
-            isCustomClick={this.state.isCustomClick}
             id="SearchPage.map"
             isModalOpenOnMobile={this.state.isSearchMapOpenOnMobile}
-            onClose={() => this.setState({ isSearchMapOpenOnMobile: false, isCustomClick: false})}
+            onClose={() => this.setState({ isSearchMapOpenOnMobile: false })}
             showAsModalMaxWidth={MODAL_BREAKPOINT}
             onManageDisableScrolling={onManageDisableScrolling}
           >

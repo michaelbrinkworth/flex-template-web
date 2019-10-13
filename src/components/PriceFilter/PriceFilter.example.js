@@ -35,7 +35,8 @@ const PriceFilterWrapper = withRouter(props => {
       {...props}
       initialValues={initialValues}
       onSubmit={(urlParam, values) => {
-          handleSubmit(urlParam, values, history);
+        console.log('Submit PriceFilterForm with (unformatted) values:', values);
+        handleSubmit(urlParam, values, history);
       }}
     />
   );

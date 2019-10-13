@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import { FormattedMessage, injectIntl, intlShape } from '../../util/reactIntl';
 import { withRouter } from 'react-router-dom';
 import omit from 'lodash/omit';
-import config from '../../config';
 
 import routeConfiguration from '../../routeConfiguration';
 import { parseDateFromISO8601, stringifyDateToISO8601 } from '../../util/dates';
@@ -20,20 +19,13 @@ import {
 } from '../../components';
 import { propTypes } from '../../util/types';
 import css from './SearchFiltersMobile.css';
-import { TopbarSearchForm } from '../../forms';
-import { parse } from '../../util/urlHelpers';
 
 const RADIX = 10;
 
 class SearchFiltersMobileComponent extends Component {
   constructor(props) {
     super(props);
-    this.customFilters = { paramName: '', options: [] };
-    this.state = {
-      isFiltersOpenOnMobile: false,
-      typesFilter: { paramName: '', options: [] },
-      initialQueryParams: null,
-    };
+    this.state = { isFiltersOpenOnMobile: false, initialQueryParams: null };
 
     this.openFilters = this.openFilters.bind(this);
     this.cancelFilters = this.cancelFilters.bind(this);
@@ -44,7 +36,6 @@ class SearchFiltersMobileComponent extends Component {
     this.handlePrice = this.handlePrice.bind(this);
     this.handleDateRange = this.handleDateRange.bind(this);
     this.handleKeyword = this.handleKeyword.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
     this.initialValue = this.initialValue.bind(this);
     this.initialValues = this.initialValues.bind(this);
     this.initialPriceRangeValue = this.initialPriceRangeValue.bind(this);
@@ -190,59 +181,6 @@ class SearchFiltersMobileComponent extends Component {
     return initialValues;
   }
 
-  handleSubmit(values) {
-    const { currentSearchParams } = this.props;
-    const { search, selectedPlace } = values.location;
-    const { history } = this.props;
-    const { origin, bounds } = selectedPlace;
-    const originMaybe = config.sortSearchByDistance ? { origin } : {};
-    const searchParams = {
-      ...currentSearchParams,
-      ...originMaybe,
-      address: search,
-      bounds,
-    };
-    history.push(createResourceLocatorString('SearchPage', routeConfiguration(), {}, searchParams));
-  }
-
-  componentDidMount() {
-    this.updateTypes(this.props);
-  }
-
-  componentDidUpdate(prevProps) {
-    if (prevProps !== this.props) {
-      this.updateTypes(this.props);
-    }
-  }
-
-  updateTypes = props => {
-    if (props.urlQueryParams.pub_category && props.urlQueryParams.pub_types) {
-      const makeChange = () => {
-        this.setState({ new: !this.state.new });
-        this.customFilters = { ...props.typesFilter };
-      };
-      const { pub_category, pub_types } = props.urlQueryParams;
-      if (!pub_category || !pub_types) return;
-      (pub_types === 'Traditional,Open-Air' || pub_types === 'Open-Air,Traditional') &&
-      pub_category === 'Photo Booth'
-        ? this.filterTypes(props.typesFilter)
-        : makeChange();
-    } else {
-      this.customFilters = props.typesFilter;
-      this.setState({ customFilters: props.typesFilter });
-    }
-    return;
-  };
-
-  filterTypes = types => {
-    const newTypes = types.options.filter(
-      typ => typ.key === 'Open-Air' || typ.key === 'Traditional'
-    );
-    let typesFilter = { paramName: 'pub_types', options: [...newTypes] };
-    this.setState({ new: true });
-    this.customFilters = typesFilter;
-  };
-
   render() {
     const {
       rootClassName,
@@ -256,17 +194,16 @@ class SearchFiltersMobileComponent extends Component {
       onManageDisableScrolling,
       selectedFiltersCount,
       categoryFilter,
+      typesFilter,
       priceFilter,
       dateRangeFilter,
       keywordFilter,
       intl,
-      location,
     } = this.props;
-    const typesFilter = this.state.typesFilter;
 
-    if (this.state.isFiltersOpenOnMobile !== customState) {
+    if(this.state.isFiltersOpenOnMobile !== customState){
       this.openFilters();
-    }
+     }
 
     const classes = classNames(rootClassName || css.root, className);
 
@@ -303,19 +240,22 @@ class SearchFiltersMobileComponent extends Component {
       />
     ) : null;
 
+
+
     const typesLabel = intl.formatMessage({ id: 'SearchFiltersMobile.typesLabel' });
 
-    const initialTypes = this.initialValues(this.customFilters.paramName);
+    const initialTypes = this.initialValues(typesFilter.paramName);
+
 
     const typesFilterElement = typesFilter ? (
       <SelectMultipleFilter
         id="SearchFiltersMobile.typesFilter"
         name="types"
-        urlParam={this.customFilters.paramName}
+        urlParam={typesFilter.paramName}
         label={typesLabel}
         onSubmit={this.handleSelectMultiple}
         liveEdit
-        options={this.customFilters.options}
+        options={typesFilter.options}
         initialValues={initialTypes}
       />
     ) : null;
@@ -365,34 +305,6 @@ class SearchFiltersMobileComponent extends Component {
         />
       ) : null;
 
-    const { mobilemenu, mobilesearch, address, origin, bounds } = parse(location.search, {
-      latlng: ['origin'],
-      latlngBounds: ['bounds'],
-    });
-    // Only render current search if full place object is available in the URL params
-    const locationFieldsPresent = config.sortSearchByDistance
-      ? address && origin && bounds
-      : address && bounds;
-    const initialSearchFormValues = {
-      location: locationFieldsPresent
-        ? {
-            search: address,
-            electedPlace: { address, origin, bounds },
-          }
-        : null,
-    };
-
-    const locationFilter = (
-      <div style={{ paddingTop: '15px', borderBottom: '#4928D7 2px solid' }}>
-        <span className={css.showSpan}>Location Search</span>
-        <TopbarSearchForm
-          onSubmit={this.handleSubmit}
-          initialValues={initialSearchFormValues}
-          isMobile={false}
-        />
-      </div>
-    );
-
     return (
       <div className={classes}>
         <div className={css.searchResultSummary}>
@@ -427,7 +339,6 @@ class SearchFiltersMobileComponent extends Component {
             <div className={css.filtersWrapper}>
               {keywordFilterElement}
               {categoryFilterElement}
-              {locationFilter}
               {typesFilterElement}
               {priceFilterElement}
               {dateRangeFilterElement}
