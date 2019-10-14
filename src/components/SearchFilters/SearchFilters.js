@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { compose } from 'redux';
 import { object, string, bool, number, func, shape } from 'prop-types';
 import { FormattedMessage, injectIntl, intlShape } from '../../util/reactIntl';
@@ -18,6 +18,8 @@ import { parseDateFromISO8601, stringifyDateToISO8601 } from '../../util/dates';
 import { createResourceLocatorString } from '../../util/routes';
 import { propTypes } from '../../util/types';
 import css from './SearchFilters.css';
+import { TopbarSearchForm } from '../../forms';
+import config from '../../config';
 
 // Dropdown container can have a positional offset (in pixels)
 const FILTER_DROPDOWN_OFFSET = -14;
@@ -69,7 +71,7 @@ const SearchFiltersComponent = props => {
     searchInProgress,
     categoryFilter,
     subCategoryFilter,
-    typesFilter,
+    propTypesFilter,
     priceFilter,
     dateRangeFilter,
     keywordFilter,
@@ -78,7 +80,35 @@ const SearchFiltersComponent = props => {
     searchFiltersPanelSelectedCount,
     history,
     intl,
+    onMapIconClick,
   } = props;
+
+  let [typesFilter, setTypes] = useState(props.typesFilter);
+
+  useEffect(() => {
+    updateTypes(props);
+  }, [urlQueryParams || props.typesFilter]);
+
+  const updateTypes = props => {
+    if (props.urlQueryParams.pub_category && props.urlQueryParams.pub_types) {
+      const { pub_category, pub_types } = props.urlQueryParams;
+      if (!pub_category || !pub_types) return;
+      (pub_types === 'Traditional,Open-Air' || pub_types === 'Open-Air,Traditional') &&
+      pub_category === 'Photo Booth'
+        ? filterTypes(props.typesFilter)
+        : (typesFilter = setTypes(props.typesFilter));
+    }
+    return;
+  };
+
+  const filterTypes = types => {
+    const newTypes = types.options.filter(
+      typ => typ.key === 'Open-Air' || typ.key === 'Traditional'
+    );
+
+    typesFilter = { paramName: 'pub_types', options: [...newTypes] };
+    setTypes(typesFilter);
+  };
 
   const hasNoResult = listingsAreLoaded && resultsCount === 0;
   const classes = classNames(rootClassName || css.root, { [css.longInfo]: hasNoResult }, className);
@@ -107,9 +137,9 @@ const SearchFiltersComponent = props => {
     ? initialValue(urlQueryParams, categoryFilter.paramName)
     : null;
 
-    const initialSubCategory = subCategoryFilter
-      ? initialValue(urlQueryParams, subCategoryFilter.paramName)
-      : null;
+  const initialSubCategory = subCategoryFilter
+    ? initialValue(urlQueryParams, subCategoryFilter.paramName)
+    : null;
 
   const initialPriceRange = priceFilter
     ? initialPriceRangeValue(urlQueryParams, priceFilter.paramName)
@@ -174,6 +204,21 @@ const SearchFiltersComponent = props => {
     history.push(createResourceLocatorString('SearchPage', routeConfiguration(), {}, queryParams));
   };
 
+  const handleSubmit = (values) => {
+    const { currentSearchParams } = props;
+    const { search, selectedPlace } = values.location;
+    const { history } = props;
+    const { origin, bounds } = selectedPlace;
+    const originMaybe = config.sortSearchByDistance ? { origin } : {};
+    const searchParams = {
+      ...currentSearchParams,
+      ...originMaybe,
+      address: search,
+      bounds,
+    };
+    history.push(createResourceLocatorString('SearchPage', routeConfiguration(), {}, searchParams));
+  }
+
   const categoryFilterElement = categoryFilter ? (
     <SelectSingleFilter
       urlParam={categoryFilter.paramName}
@@ -197,7 +242,6 @@ const SearchFiltersComponent = props => {
       contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
     />
   ) : null;
-
 
   const typesFilterElement = typesFilter ? (
     <SelectMultipleFilter
@@ -237,6 +281,16 @@ const SearchFiltersComponent = props => {
       />
     ) : null;
 
+  const locationFilter = (
+    <TopbarSearchForm
+      onSubmit={handleSubmit}
+      initialValues={false}
+      isMobile={false}
+      isCustomCss={true}
+      contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
+    />
+  );
+
   const keywordFilterElement =
     keywordFilter && keywordFilter.config.active ? (
       <KeywordFilter
@@ -268,14 +322,24 @@ const SearchFiltersComponent = props => {
       />
     </button>
   ) : null;
+
+  const mapButton = (
+    <div style={{ display: 'inline-block' }} className={css.mapIcon} onClick={onMapIconClick}>
+      <FormattedMessage id="SearchFilters.openMapView" className={css.mapIconText} />
+    </div>
+  );
+
+  // props.updateTypes(props);
   return (
     <div className={classes}>
-      <div className={css.filters}>
+      <div className={css.filters} style={{ display: 'flex' }}>
         {categoryFilterElement}
         {subCategoryFilterElement}
         {typesFilterElement}
         {priceFilterElement}
         {dateRangeFilterElement}
+        {locationFilter}
+        {mapButton}
         {keywordFilterElement}
         {toggleSearchFiltersPanelButton}
       </div>

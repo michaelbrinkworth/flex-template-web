@@ -29,6 +29,7 @@ class MainPanel extends Component {
       searchInProgress,
       searchListingsError,
       searchParamsAreInSync,
+      currentSearchParams,
       onActivateListing,
       onManageDisableScrolling,
       onOpenModal,
@@ -38,11 +39,11 @@ class MainPanel extends Component {
       searchParamsForPagination,
       showAsModalMaxWidth,
       primaryFilters,
+      updateTypes,
       secondaryFilters,
     } = this.props;
 
     const isSearchFiltersPanelOpen = !!secondaryFilters && this.state.isSearchFiltersPanelOpen;
-
     const filters = merge(primaryFilters, secondaryFilters);
     const selectedFilters = validFilterParams(urlQueryParams, filters);
     const selectedFiltersCount = Object.keys(selectedFilters).length;
@@ -75,16 +76,21 @@ class MainPanel extends Component {
 
     return (
       <div className={classes}>
+        {/* <div className={css.mapIcon} onClick={onMapIconClick}>
+            <FormattedMessage id="SearchFilters.openMapView" className={css.mapIconText} />
+          </div> */}
         <SearchFilters
           className={css.searchFilters}
+          updateTypes={updateTypes}
           urlQueryParams={urlQueryParams}
           listingsAreLoaded={listingsAreLoaded}
           resultsCount={totalItems}
           searchInProgress={searchInProgress}
           searchListingsError={searchListingsError}
+          onMapIconClick={onMapIconClick}
           onManageDisableScrolling={onManageDisableScrolling}
           {...searchFiltersPanelProps}
-          {...primaryFilters}
+          {...extractKeys(primaryFilters)}
         />
         <SearchFiltersMobile
           className={css.searchFiltersMobile}
@@ -100,10 +106,12 @@ class MainPanel extends Component {
           onOpenModal={onOpenModal}
           onCloseModal={onCloseModal}
           filterParamNames={filterParamNames}
+          currentSearchParams
           selectedFiltersCount={selectedFiltersCount}
           {...primaryFilters}
           {...secondaryFilters}
         />
+
         {isSearchFiltersPanelOpen ? (
           <div className={classNames(css.searchFiltersPanel)}>
             <SearchFiltersPanel
@@ -169,6 +177,15 @@ MainPanel.propTypes = {
   showAsModalMaxWidth: number.isRequired,
   primaryFilters: objectOf(propTypes.filterConfig),
   secondaryFilters: objectOf(propTypes.filterConfig),
+};
+
+const extractKeys = obj => {
+  let returnedObject = {};
+  Object.keys(obj).forEach(k => {
+    if (k === 'keywordFilter') return;
+    returnedObject[k] = obj[k];
+  });
+  return returnedObject;
 };
 
 export default MainPanel;
