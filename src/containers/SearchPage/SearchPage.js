@@ -209,9 +209,12 @@ export class SearchPageComponent extends Component {
         schema={schema}
       >
         <TopbarContainer
-        onOpenSearchN={() => { this.onOpenMobileModal()}}
+          onOpenSearchN={() => { this.onOpenMobileModal()}}
           className={topbarClasses}
           currentPage="SearchPage"
+          history
+          urlQueryParams={validFilterParams}
+          keywordFilter={filters.keywordFilter}
           currentSearchParams={urlQueryParams}
         />
         <div className={css.container}>
