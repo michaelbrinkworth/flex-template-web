@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { compose } from 'redux';
 import { object, string, bool, number, func, shape } from 'prop-types';
 import { FormattedMessage, injectIntl, intlShape } from '../../util/reactIntl';
@@ -69,7 +69,6 @@ const SearchFiltersComponent = props => {
     searchInProgress,
     categoryFilter,
     subCategoryFilter,
-    typesFilter,
     priceFilter,
     dateRangeFilter,
     keywordFilter,
@@ -79,6 +78,33 @@ const SearchFiltersComponent = props => {
     history,
     intl,
   } = props;
+
+  let [typesFilter, setTypes] = useState(props.typesFilter);
+
+  useEffect(() => {
+    updateTypes(props);
+  }, [urlQueryParams || props.typesFilter]);
+
+  const updateTypes = props => {
+    if (props.urlQueryParams.pub_category && props.urlQueryParams.pub_types) {
+      const { pub_category, pub_types } = props.urlQueryParams;
+      if (!pub_category || !pub_types) return;
+      (pub_types === 'Traditional,Open-Air' || pub_types === 'Open-Air,Traditional') &&
+      pub_category === 'Photo Booth'
+        ? filterTypes(props.typesFilter)
+        : (typesFilter = setTypes(props.typesFilter));
+    }
+    return;
+  };
+
+  const filterTypes = types => {
+    const newTypes = types.options.filter(
+      typ => typ.key === 'Open-Air' || typ.key === 'Traditional'
+    );
+
+    typesFilter = { paramName: 'pub_types', options: [...newTypes] };
+    setTypes(typesFilter);
+  };
 
   const hasNoResult = listingsAreLoaded && resultsCount === 0;
   const classes = classNames(rootClassName || css.root, { [css.longInfo]: hasNoResult }, className);

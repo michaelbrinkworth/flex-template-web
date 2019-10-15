@@ -4,6 +4,8 @@ import classNames from 'classnames';
 import { FormattedMessage, injectIntl, intlShape } from '../../util/reactIntl';
 import { withRouter } from 'react-router-dom';
 import omit from 'lodash/omit';
+import config from '../../config';
+
 
 import routeConfiguration from '../../routeConfiguration';
 import { parseDateFromISO8601, stringifyDateToISO8601 } from '../../util/dates';
@@ -25,7 +27,12 @@ const RADIX = 10;
 class SearchFiltersMobileComponent extends Component {
   constructor(props) {
     super(props);
-    this.state = { isFiltersOpenOnMobile: false, initialQueryParams: null };
+    this.customFilters = { paramName: '', options: [] };
+    this.state = {
+      isFiltersOpenOnMobile: false,
+      typesFilter: { paramName: '', options: [] },
+      initialQueryParams: null,
+    };
 
     this.openFilters = this.openFilters.bind(this);
     this.cancelFilters = this.cancelFilters.bind(this);
@@ -38,6 +45,7 @@ class SearchFiltersMobileComponent extends Component {
     this.handleKeyword = this.handleKeyword.bind(this);
     this.initialValue = this.initialValue.bind(this);
     this.initialValues = this.initialValues.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.initialPriceRangeValue = this.initialPriceRangeValue.bind(this);
     this.initialDateRangeValue = this.initialDateRangeValue.bind(this);
   }
@@ -181,6 +189,59 @@ class SearchFiltersMobileComponent extends Component {
     return initialValues;
   }
 
+  handleSubmit(values) {
+    const { currentSearchParams } = this.props;
+    const { search, selectedPlace } = values.location;
+    const { history } = this.props;
+    const { origin, bounds } = selectedPlace;
+    const originMaybe = config.sortSearchByDistance ? { origin } : {};
+    const searchParams = {
+      ...currentSearchParams,
+      ...originMaybe,
+      address: search,
+      bounds,
+    };
+    history.push(createResourceLocatorString('SearchPage', routeConfiguration(), {}, searchParams));
+  }
+
+  componentDidMount() {
+    this.updateTypes(this.props);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps !== this.props) {
+      this.updateTypes(this.props);
+    }
+  }
+
+  updateTypes = props => {
+    if (props.urlQueryParams.pub_category && props.urlQueryParams.pub_types) {
+      const makeChange = () => {
+        this.setState({ new: !this.state.new });
+        this.customFilters = { ...props.typesFilter };
+      };
+      const { pub_category, pub_types } = props.urlQueryParams;
+      if (!pub_category || !pub_types) return;
+      (pub_types === 'Traditional,Open-Air' || pub_types === 'Open-Air,Traditional') &&
+      pub_category === 'Photo Booth'
+        ? this.filterTypes(props.typesFilter)
+        : makeChange();
+    } else {
+      this.customFilters = props.typesFilter;
+      this.setState({ customFilters: props.typesFilter });
+    }
+    return;
+  };
+
+  filterTypes = types => {
+    const newTypes = types.options.filter(
+      typ => typ.key === 'Open-Air' || typ.key === 'Traditional'
+    );
+    let typesFilter = { paramName: 'pub_types', options: [...newTypes] };
+    this.setState({ new: true });
+    this.customFilters = typesFilter;
+  };
+
   render() {
     const {
       rootClassName,
@@ -194,16 +255,17 @@ class SearchFiltersMobileComponent extends Component {
       onManageDisableScrolling,
       selectedFiltersCount,
       categoryFilter,
-      typesFilter,
       priceFilter,
       dateRangeFilter,
       keywordFilter,
       intl,
     } = this.props;
+    const typesFilter = this.state.typesFilter;
 
-    if(this.state.isFiltersOpenOnMobile !== customState){
+
+    if (this.state.isFiltersOpenOnMobile !== customState) {
       this.openFilters();
-     }
+    }
 
     const classes = classNames(rootClassName || css.root, className);
 
@@ -240,22 +302,19 @@ class SearchFiltersMobileComponent extends Component {
       />
     ) : null;
 
-
-
     const typesLabel = intl.formatMessage({ id: 'SearchFiltersMobile.typesLabel' });
 
-    const initialTypes = this.initialValues(typesFilter.paramName);
-
+    const initialTypes = this.initialValues(this.customFilters.paramName);
 
     const typesFilterElement = typesFilter ? (
       <SelectMultipleFilter
         id="SearchFiltersMobile.typesFilter"
         name="types"
-        urlParam={typesFilter.paramName}
+        urlParam={this.customFilters.paramName}
         label={typesLabel}
         onSubmit={this.handleSelectMultiple}
         liveEdit
-        options={typesFilter.options}
+        options={this.customFilters.options}
         initialValues={initialTypes}
       />
     ) : null;

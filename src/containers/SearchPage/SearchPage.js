@@ -216,7 +216,7 @@ export class SearchPageComponent extends Component {
         />
         <div className={css.container}>
           <MainPanel
-          customState={this.state.isMobileModalOpen}
+            customState={this.state.isMobileModalOpen}
             urlQueryParams={validQueryParams}
             listings={listings}
             searchInProgress={searchInProgress}
@@ -230,6 +230,10 @@ export class SearchPageComponent extends Component {
             pagination={pagination}
             searchParamsForPagination={parse(location.search)}
             showAsModalMaxWidth={MODAL_BREAKPOINT}
+            location
+            history
+            updateTypes={this.updateTypes}
+            currentSearchParams={urlQueryParams}
             primaryFilters={{
               categoryFilter: filters.categoryFilter,
               typesFilter: filters.typesFilter,
