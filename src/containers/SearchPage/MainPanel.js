@@ -84,7 +84,11 @@ class MainPanel extends Component {
           searchInProgress={searchInProgress}
           searchListingsError={searchListingsError}
           onManageDisableScrolling={onManageDisableScrolling}
+
           updateTypes={updateTypes}
+
+          onMapIconClick={onMapIconClick}
+
           {...searchFiltersPanelProps}
           {...extractKeys(primaryFilters)}
           {...primaryFilters}

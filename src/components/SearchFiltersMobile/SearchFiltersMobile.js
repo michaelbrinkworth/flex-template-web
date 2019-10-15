@@ -6,7 +6,6 @@ import { withRouter } from 'react-router-dom';
 import omit from 'lodash/omit';
 import config from '../../config';
 
-
 import routeConfiguration from '../../routeConfiguration';
 import { parseDateFromISO8601, stringifyDateToISO8601 } from '../../util/dates';
 import { createResourceLocatorString } from '../../util/routes';
@@ -19,6 +18,8 @@ import {
   SelectMultipleFilter,
   BookingDateRangeFilter,
 } from '../../components';
+import { TopbarSearchForm } from '../../forms';
+import { parse } from '../../util/urlHelpers';
 import { propTypes } from '../../util/types';
 import css from './SearchFiltersMobile.css';
 
@@ -259,6 +260,7 @@ class SearchFiltersMobileComponent extends Component {
       dateRangeFilter,
       keywordFilter,
       intl,
+      location,
     } = this.props;
     const typesFilter = this.state.typesFilter;
 
@@ -304,7 +306,11 @@ class SearchFiltersMobileComponent extends Component {
 
     const typesLabel = intl.formatMessage({ id: 'SearchFiltersMobile.typesLabel' });
 
+
     const initialTypes = this.initialValues(this.customFilters.paramName);
+
+    const initialTypes = this.initialValues(typesFilter.paramName);
+
 
     const typesFilterElement = typesFilter ? (
       <SelectMultipleFilter
@@ -364,6 +370,33 @@ class SearchFiltersMobileComponent extends Component {
         />
       ) : null;
 
+    const { mobilemenu, mobilesearch, address, origin, bounds } = parse(location.search, {
+      latlng: ['origin'],
+      latlngBounds: ['bounds'],
+    });
+    const locationFieldsPresent = config.sortSearchByDistance
+      ? address && origin && bounds
+      : address && bounds;
+    const initialSearchFormValues = {
+      location: locationFieldsPresent
+        ? {
+            search: address,
+            electedPlace: { address, origin, bounds },
+          }
+        : null,
+    };
+
+    const locationFilter = (
+      <div style={{ paddingTop: '15px', borderBottom: '#4928D7 2px solid' }}>
+        <span className={css.showSpan}>Location Search</span>
+        <TopbarSearchForm
+          onSubmit={this.handleSubmit}
+          initialValues={initialSearchFormValues}
+          isMobile={false}
+        />
+      </div>
+    );
+
     return (
       <div className={classes}>
         <div className={css.searchResultSummary}>
@@ -396,8 +429,9 @@ class SearchFiltersMobileComponent extends Component {
           </div>
           {this.state.isFiltersOpenOnMobile ? (
             <div className={css.filtersWrapper}>
-              {keywordFilterElement}
+              {/* {keywordFilterElement} */}
               {categoryFilterElement}
+              {locationFilter}
               {typesFilterElement}
               {priceFilterElement}
               {dateRangeFilterElement}

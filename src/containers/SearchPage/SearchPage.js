@@ -41,6 +41,7 @@ export class SearchPageComponent extends Component {
     this.state = {
       isSearchMapOpenOnMobile: props.tab === 'map',
       isMobileModalOpen: false,
+      isCustomClick: false,
     };
 
     this.searchMapListingsInProgress = false;
@@ -73,7 +74,7 @@ export class SearchPageComponent extends Component {
       },
       typesFilter: {
         paramName: 'pub_types',
-        options:  types,
+        options: types,
       },
       priceFilter: {
         paramName: 'price',
@@ -89,8 +90,6 @@ export class SearchPageComponent extends Component {
       },
     };
   }
-
-
 
   // Callback to determine if new search is needed
   // when map is moved by user or viewport has changed
@@ -142,7 +141,7 @@ export class SearchPageComponent extends Component {
   // Invoked when a modal is closed from a child component,
   // for example when a filter modal is opened in mobile view
   onCloseMobileModal() {
-    this.setState({ isMobileModalOpen: false });
+    this.setState({ isMobileModalOpen: false, isCustomClick: false });
   }
 
   render() {
@@ -181,12 +180,15 @@ export class SearchPageComponent extends Component {
 
     const isWindowDefined = typeof window !== 'undefined';
     const isMobileLayout = isWindowDefined && window.innerWidth < MODAL_BREAKPOINT;
-    const shouldShowSearchMap =
-      !isMobileLayout || (isMobileLayout && this.state.isSearchMapOpenOnMobile);
+
+    const shouldShowSearchMap = 
+    !false || (true && this.state.isSearchMapOpenOnMobile);
 
     const onMapIconClick = () => {
       this.useLocationSearchBounds = true;
-      this.setState({ isSearchMapOpenOnMobile: true });
+      console.log('Showing map')
+      this.setState({ isSearchMapOpenOnMobile: true }); 
+      this.setState( {isCustomClick: true});
     };
 
     const { address, bounds, origin } = searchInURL || {};
@@ -209,7 +211,9 @@ export class SearchPageComponent extends Component {
         schema={schema}
       >
         <TopbarContainer
-        onOpenSearchN={() => { this.onOpenMobileModal()}}
+          onOpenSearchN={() => {
+            this.onOpenMobileModal();
+          }}
           className={topbarClasses}
           currentPage="SearchPage"
           currentSearchParams={urlQueryParams}
@@ -231,9 +235,11 @@ export class SearchPageComponent extends Component {
             searchParamsForPagination={parse(location.search)}
             showAsModalMaxWidth={MODAL_BREAKPOINT}
             location
+
             history
             updateTypes={this.updateTypes}
             currentSearchParams={urlQueryParams}
+
             primaryFilters={{
               categoryFilter: filters.categoryFilter,
               typesFilter: filters.typesFilter,
@@ -246,12 +252,13 @@ export class SearchPageComponent extends Component {
             className={css.mapPanel}
             id="SearchPage.map"
             isModalOpenOnMobile={this.state.isSearchMapOpenOnMobile}
-            onClose={() => this.setState({ isSearchMapOpenOnMobile: false })}
+            isCustomClick={this.state.isCustomClick}
+            onClose={() => this.setState({ isSearchMapOpenOnMobile: false, isCustomClick: false})}
             showAsModalMaxWidth={MODAL_BREAKPOINT}
             onManageDisableScrolling={onManageDisableScrolling}
           >
             <div className={css.mapWrapper}>
-              {shouldShowSearchMap ? (
+              { this.state.isCustomClick ? (
                 <SearchMap
                   reusableContainerClassName={css.map}
                   activeListingId={activeListingId}

@@ -77,6 +77,7 @@ const SearchFiltersComponent = props => {
     searchFiltersPanelSelectedCount,
     history,
     intl,
+    onMapIconClick
   } = props;
 
   let [typesFilter, setTypes] = useState(props.typesFilter);
@@ -294,6 +295,13 @@ const SearchFiltersComponent = props => {
       />
     </button>
   ) : null;
+
+  const mapButton = (
+    <div style={{ display: 'inline-block' }} className={css.mapIcon} onClick={onMapIconClick}>
+      <FormattedMessage id="SearchFilters.openMapView" className={css.mapIconText} />
+    </div>
+  );
+
   return (
     <div className={classes}>
       <div className={css.filters}>
@@ -302,6 +310,7 @@ const SearchFiltersComponent = props => {
         {typesFilterElement}
         {priceFilterElement}
         {dateRangeFilterElement}
+        {mapButton}
         {keywordFilterElement}
         {toggleSearchFiltersPanelButton}
       </div>

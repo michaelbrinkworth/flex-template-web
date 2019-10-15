@@ -12,9 +12,9 @@
 
 .modalContainer {
   @apply --marketplaceModalInMobileBaseStyles;
-
+   
   @media (--viewportMedium) {
-    flex-basis: 576px;
+    flex-basis: 100vw;
   }
 }
 
