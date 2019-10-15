@@ -75,10 +75,11 @@ class ModalInMobileComponent extends Component {
       closeButtonMessage,
       onManageDisableScrolling,
       viewport,
+      isCustomClick
     } = this.props;
 
-    const isMobileLayout = viewport.width <= showAsModalMaxWidth;
-    const isOpenInMobile = this.state.isOpen;
+    const isMobileLayout = viewport.width <= showAsModalMaxWidth || isCustomClick;
+    const isOpenInMobile = this.state.isOpen || isCustomClick;
     const isClosedInMobile = isMobileLayout && !isOpenInMobile;
     const isOpen = isOpenInMobile && isMobileLayout;
 
@@ -92,6 +93,7 @@ class ModalInMobileComponent extends Component {
     return (
       <Modal
         className={classes}
+        isCustomClick={isCustomClick}
         containerClassName={containerClassName || css.modalContainer}
         contentClassName={css.modalContent}
         id={id}
