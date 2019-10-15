@@ -74,7 +74,6 @@ class TopbarComponent extends Component {
     this.handleMobileMenuClose = this.handleMobileMenuClose.bind(this);
     this.handleMobileSearchOpen = this.handleMobileSearchOpen.bind(this);
     this.handleMobileSearchClose = this.handleMobileSearchClose.bind(this);
-    this.handleSubmitCustom = this.handleSubmitCustom.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
   }
@@ -127,18 +126,6 @@ class TopbarComponent extends Component {
     });
   }
 
-  handleSubmitCustom(values) {
-    const { currentSearchParams } = this.props;
-    const keywords = values.keywords;
-    const { history } = this.props;
-    const searchParams = {
-      ...currentSearchParams,
-      keywords,
-    };
-    history.push(createResourceLocatorString('SearchPage', routeConfiguration(), {}, searchParams));
-  }
-
-
   render() {
     const {
       className,
@@ -161,7 +148,6 @@ class TopbarComponent extends Component {
       sendVerificationEmailInProgress,
       sendVerificationEmailError,
       showGenericError,
-      keywordFilter
     } = this.props;
 
     const { mobilemenu, mobilesearch, address, origin, bounds } = parse(location.search, {
@@ -238,8 +224,7 @@ class TopbarComponent extends Component {
             isAuthenticated={isAuthenticated}
             notificationCount={notificationCount}
             onLogout={this.handleLogout}
-            onSearchSubmit={this.handleSubmitCustom}
-            keywordFilter
+            onSearchSubmit={this.handleSubmit}
           />
         </div>
         <Modal
