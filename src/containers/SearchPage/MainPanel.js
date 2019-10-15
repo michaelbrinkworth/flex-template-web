@@ -84,7 +84,7 @@ class MainPanel extends Component {
           searchListingsError={searchListingsError}
           onManageDisableScrolling={onManageDisableScrolling}
           {...searchFiltersPanelProps}
-          {...primaryFilters}
+          {...extractKeys(primaryFilters)}
         />
         <SearchFiltersMobile
           className={css.searchFiltersMobile}
@@ -169,6 +169,15 @@ MainPanel.propTypes = {
   showAsModalMaxWidth: number.isRequired,
   primaryFilters: objectOf(propTypes.filterConfig),
   secondaryFilters: objectOf(propTypes.filterConfig),
+};
+
+const extractKeys = obj => {
+  let returnedObject = {};
+  Object.keys(obj).forEach(k => {
+    if (k === 'keywordFilter') return;
+    returnedObject[k] = obj[k];
+  });
+  return returnedObject;
 };
 
 export default MainPanel;
