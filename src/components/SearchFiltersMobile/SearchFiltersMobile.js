@@ -17,6 +17,7 @@ import {
   SelectMultipleFilter,
   BookingDateRangeFilter,
 } from '../../components';
+import CustomSearchForm from '../../forms/CustomForm/CustomForm';
 import { propTypes } from '../../util/types';
 import css from './SearchFiltersMobile.css';
 
@@ -201,9 +202,9 @@ class SearchFiltersMobileComponent extends Component {
       intl,
     } = this.props;
 
-    if(this.state.isFiltersOpenOnMobile !== customState){
+    if (this.state.isFiltersOpenOnMobile !== customState) {
       this.openFilters();
-     }
+    }
 
     const classes = classNames(rootClassName || css.root, className);
 
@@ -240,12 +241,9 @@ class SearchFiltersMobileComponent extends Component {
       />
     ) : null;
 
-
-
     const typesLabel = intl.formatMessage({ id: 'SearchFiltersMobile.typesLabel' });
 
     const initialTypes = this.initialValues(typesFilter.paramName);
-
 
     const typesFilterElement = typesFilter ? (
       <SelectMultipleFilter
@@ -306,51 +304,56 @@ class SearchFiltersMobileComponent extends Component {
       ) : null;
 
     return (
-      <div className={classes}>
-        <div className={css.searchResultSummary}>
-          {listingsAreLoaded && resultsCount > 0 ? resultsFound : null}
-          {listingsAreLoaded && resultsCount === 0 ? noResults : null}
-          {searchInProgress ? loadingResults : null}
+      <div>
+        <div className={css.cusNav}>
+          <CustomSearchForm onSubmit={this.handleKeyword} />
         </div>
-        <div className={css.buttons}>
-          <Button rootClassName={filtersButtonClasses} onClick={this.openFilters}>
-            <FormattedMessage id="SearchFilters.filtersButtonLabel" className={css.mapIconText} />
-          </Button>
-          <div className={css.mapIcon} onClick={onMapIconClick}>
-            <FormattedMessage id="SearchFilters.openMapView" className={css.mapIconText} />
+        <div className={classes}>
+          <div className={css.searchResultSummary}>
+            {listingsAreLoaded && resultsCount > 0 ? resultsFound : null}
+            {listingsAreLoaded && resultsCount === 0 ? noResults : null}
+            {searchInProgress ? loadingResults : null}
           </div>
-        </div>
-        <ModalInMobile
-          id="SearchFiltersMobile.filters"
-          isModalOpenOnMobile={this.state.isFiltersOpenOnMobile}
-          onClose={this.cancelFilters}
-          showAsModalMaxWidth={showAsModalMaxWidth}
-          onManageDisableScrolling={onManageDisableScrolling}
-          containerClassName={css.modalContainer}
-          closeButtonMessage={modalCloseButtonMessage}
-        >
-          <div className={css.modalHeadingWrapper}>
-            <span className={css.modalHeading}>{filtersHeading}</span>
-            <button className={css.resetAllButton} onClick={e => this.resetAll(e)}>
-              <FormattedMessage id={'SearchFiltersMobile.resetAll'} />
-            </button>
-          </div>
-          {this.state.isFiltersOpenOnMobile ? (
-            <div className={css.filtersWrapper}>
-              {keywordFilterElement}
-              {categoryFilterElement}
-              {typesFilterElement}
-              {priceFilterElement}
-              {dateRangeFilterElement}
-            </div>
-          ) : null}
-
-          <div className={css.showListingsContainer}>
-            <Button className={css.showListingsButton} onClick={this.closeFilters}>
-              {showListingsLabel}
+          <div className={css.buttons}>
+            <Button rootClassName={filtersButtonClasses} onClick={this.openFilters}>
+              <FormattedMessage id="SearchFilters.filtersButtonLabel" className={css.mapIconText} />
             </Button>
+            <div className={css.mapIcon} onClick={onMapIconClick}>
+              <FormattedMessage id="SearchFilters.openMapView" className={css.mapIconText} />
+            </div>
           </div>
-        </ModalInMobile>
+          <ModalInMobile
+            id="SearchFiltersMobile.filters"
+            isModalOpenOnMobile={this.state.isFiltersOpenOnMobile}
+            onClose={this.cancelFilters}
+            showAsModalMaxWidth={showAsModalMaxWidth}
+            onManageDisableScrolling={onManageDisableScrolling}
+            containerClassName={css.modalContainer}
+            closeButtonMessage={modalCloseButtonMessage}
+          >
+            <div className={css.modalHeadingWrapper}>
+              <span className={css.modalHeading}>{filtersHeading}</span>
+              <button className={css.resetAllButton} onClick={e => this.resetAll(e)}>
+                <FormattedMessage id={'SearchFiltersMobile.resetAll'} />
+              </button>
+            </div>
+            {this.state.isFiltersOpenOnMobile ? (
+              <div className={css.filtersWrapper}>
+                {keywordFilterElement}
+                {categoryFilterElement}
+                {typesFilterElement}
+                {priceFilterElement}
+                {dateRangeFilterElement}
+              </div>
+            ) : null}
+
+            <div className={css.showListingsContainer}>
+              <Button className={css.showListingsButton} onClick={this.closeFilters}>
+                {showListingsLabel}
+              </Button>
+            </div>
+          </ModalInMobile>
+        </div>
       </div>
     );
   }
