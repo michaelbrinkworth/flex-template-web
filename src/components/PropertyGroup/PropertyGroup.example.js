@@ -1,46 +1,56 @@
 import PropertyGroup from './PropertyGroup';
 
-const exampleOptions = [
-  {
-    key: 'towels',
-    label: 'Towels',
-  },
-  {
-    key: 'bathroom',
-    label: 'Bathroom',
-  },
-  {
-    key: 'swimming_pool',
-    label: 'Swimming pool',
-  },
-  {
-    key: 'own_drinks',
-    label: 'Own drinks allowed',
-  },
-  {
-    key: 'jacuzzi',
-    label: 'Jacuzzi',
-  },
-  {
-    key: 'audiovisual_entertainment',
-    label: 'Audiovisual entertainment',
-  },
-  {
-    key: 'barbeque',
-    label: 'Barbeque',
-  },
-  {
-    key: 'own_food_allowed',
-    label: 'Own food allowed',
-  },
+
+const categories = [
+    { key: 'Balloon Styling', label: 'Balloon Styling' },
+  { key: 'Marquee & Canopy', label: 'Marquee & Canopy' },
+  { key: 'Photo Booth', label: 'Photo Booth' },
+  { key: 'Jumping Castles', label: 'Jumping Castles' },
+  { key: 'Event Furniture', label: 'Event Furniture' },
+  { key: 'Venues', label: 'Venues' },
+  { key: 'Platters', label: 'Platters' },
 ];
+
+
+const types = [
+//Jumping Castle Types
+    {
+      key: 'Frozen',
+      label: 'Frozen',
+    },
+    {
+      key: 'Slide',
+      label: 'Slide',
+    },
+    {
+      key: 'Paw Patrol',
+      label: 'Paw Patrol',
+       },
+//Photobooths
+{
+  key: 'Open-Air',
+  label: 'Open-Air',
+},
+{
+  key: 'Traditional',
+  label: 'Traditional',
+},
+{
+  key: 'Mirrorless',
+  label: 'Mirrorless',
+   },
+   {
+     key: 'GIF-maker',
+     label: 'GIF-maker',
+      },
+ ];
 
 export const WithSomeSelected = {
   component: PropertyGroup,
   props: {
-    id: 'amenities',
-    options: exampleOptions,
-    selectedOptions: ['towels', 'bathroom', 'barbeque'],
+    id: 'Marquee & Canopy',
+    options: categories,
+    selectedOptions: ['GIF-maker', 'Open-Air', 'Mirrorless'],
     twoColumns: true,
   },
   group: 'misc',

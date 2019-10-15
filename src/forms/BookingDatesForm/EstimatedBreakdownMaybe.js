@@ -31,7 +31,7 @@ import Decimal from 'decimal.js';
 import { types as sdkTypes } from '../../util/sdkLoader';
 import { dateFromLocalToAPI, nightsBetween, daysBetween } from '../../util/dates';
 import { TRANSITION_REQUEST_PAYMENT, TX_TRANSITION_ACTOR_CUSTOMER } from '../../util/transaction';
-import { LINE_ITEM_DAY, LINE_ITEM_NIGHT, LINE_ITEM_UNITS, DATE_TYPE_DATE,  LINE_ITEM_DELIVERY_FEE} from '../../util/types';
+import { LINE_ITEM_DAY, LINE_ITEM_NIGHT, LINE_ITEM_UNITS, DATE_TYPE_DATE } from '../../util/types';
 import { unitDivisor, convertMoneyToNumber, convertUnitToSubUnit } from '../../util/currency';
 import { BookingBreakdown } from '../../components';
 
@@ -39,26 +39,14 @@ import css from './BookingDatesForm.css';
 
 const { Money, UUID } = sdkTypes;
 
-const estimatedTotalPrice = (unitPrice, unitCount, deliveryFee) => {
+const estimatedTotalPrice = (unitPrice, unitCount) => {
   const numericPrice = convertMoneyToNumber(unitPrice);
-  const deliveryFeePrice = deliveryFee
-    ? convertMoneyToNumber(deliveryFee)
-    : null;
-  const numericTotalPrice = deliveryFeePrice
-    ? new Decimal(numericPrice)
-        .times(unitCount)
-        .plus(deliveryFeePrice)
-        .toNumber()
-    : new Decimal(numericPrice).times(unitCount).toNumber();
+  const numericTotalPrice = new Decimal(numericPrice).times(unitCount).toNumber();
   return new Money(
-    convertUnitToSubUnit(
-      numericTotalPrice,
-      unitDivisor(unitPrice.currency)
-    ),
+    convertUnitToSubUnit(numericTotalPrice, unitDivisor(unitPrice.currency)),
     unitPrice.currency
   );
 };
-
 
 // When we cannot speculatively initiate a transaction (i.e. logged
 // out), we must estimate the booking breakdown. This function creates
@@ -67,33 +55,6 @@ const estimatedTransaction = (unitType, bookingStart, bookingEnd, unitPrice, qua
   const now = new Date();
   const isNightly = unitType === LINE_ITEM_NIGHT;
   const isDaily = unitType === LINE_ITEM_DAY;
-  const deliveryFee = unitType === LINE_ITEM_DELIVERY_FEE;
-
-  const deliveryFeeLineItem = {
-  code: LINE_ITEM_DELIVERY_FEE,
-  includeFor: ['customer', 'provider'],
-  unitPrice: deliveryFee,
-  quantity: new Decimal(1),
-  lineTotal: deliveryFee,
-  reversal: false,
-};
-
-const deliveryFeeLineItemMaybe = deliveryFee
-  ? [deliveryFeeLineItem]
-  : [];
-
-const lineItems = [
-  ...deliveryFeeLineItemMaybe,
-  {
-    code: unitType,
-    includeFor: ['customer', 'provider'],
-    unitPrice: unitPrice,
-    quantity: new Decimal(unitCount),
-    lineTotal: totalPrice,
-    reversal: false,
-  },
-];
-
 
   const unitCount = isNightly
     ? nightsBetween(bookingStart, bookingEnd)
@@ -101,9 +62,7 @@ const lineItems = [
     ? daysBetween(bookingStart, bookingEnd)
     : quantity;
 
-
-
-  const totalPrice = estimatedTotalPrice(unitPrice, unitCount, deliveryFee );
+  const totalPrice = estimatedTotalPrice(unitPrice, unitCount);
 
   // bookingStart: "Fri Mar 30 2018 12:00:00 GMT-1100 (SST)" aka "Fri Mar 30 2018 23:00:00 GMT+0000 (UTC)"
   // Server normalizes night/day bookings to start from 00:00 UTC aka "Thu Mar 29 2018 13:00:00 GMT-1100 (SST)"
@@ -162,7 +121,6 @@ const lineItems = [
 const EstimatedBreakdownMaybe = props => {
   const { unitType, unitPrice, startDate, endDate, quantity } = props.bookingData;
   const isUnits = unitType === LINE_ITEM_UNITS;
-  const deliveryFee = unitType === LINE_ITEM_DELIVERY_FEE;
   const quantityIfUsingUnits = !isUnits || Number.isInteger(quantity);
   const canEstimatePrice = startDate && endDate && unitPrice && quantityIfUsingUnits;
   if (!canEstimatePrice) {

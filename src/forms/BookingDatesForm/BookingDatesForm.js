@@ -9,8 +9,7 @@ import { required, bookingDatesRequired, composeValidators } from '../../util/va
 import { START_DATE, END_DATE } from '../../util/dates';
 import { propTypes } from '../../util/types';
 import config from '../../config';
-import { Form, PrimaryButton, FieldDateRangeInput, FieldCheckbox, } from '../../components';
-import { formatMoney } from '../../util/currency';
+import { Form, PrimaryButton, FieldDateRangeInput } from '../../components';
 import EstimatedBreakdownMaybe from './EstimatedBreakdownMaybe';
 
 import css from './BookingDatesForm.css';
@@ -84,7 +83,6 @@ export class BookingDatesFormComponent extends Component {
             handleSubmit,
             intl,
             isOwnListing,
-            deliveryFee,
             submitButtonWrapperClassName,
             unitPrice,
             unitType,
@@ -93,16 +91,7 @@ export class BookingDatesFormComponent extends Component {
             fetchTimeSlotsError,
           } = fieldRenderProps;
           const { startDate, endDate } = values && values.bookingDates ? values.bookingDates : {};
-          const selectedDeliveryFee =
-          values &&
-          values.additionalItems &&
-          values.additionalItems.find(i => i === 'deliveryFee')
-            ? deliveryFee
-            : null;
 
-            const deliveryFeeLabel = intl.formatMessage({
-              id: 'BookingDatesForm.deliveryFee',
-            })
           const bookingStartLabel = intl.formatMessage({
             id: 'BookingDatesForm.bookingStartTitle',
           });
@@ -134,7 +123,6 @@ export class BookingDatesFormComponent extends Component {
                   // NOTE: If unitType is `line-item/units`, a new picker
                   // for the quantity should be added to the form.
                   quantity: 1,
-                  deliveryFee: selectedDeliveryFee,
                 }
               : null;
           const bookingInfo = bookingData ? (
@@ -189,19 +177,6 @@ export class BookingDatesFormComponent extends Component {
                   bookingDatesRequired(startDateErrorMessage, endDateErrorMessage)
                 )}
               />
-                {deliveryFee ? (
-              <div className={css.deliveryFee}>
-                <FieldCheckbox
-                  className={css.deliveryFeeLabel}
-                  id={`${formId}.deliveryFee`}
-                  label={deliveryFeeLabel}
-                  name={'additionalItems'}
-                  value={'deliveryFee'}
-                />
-                <span className={css.deliveryFeeAmount}>{formatMoney(intl, deliveryFee)}</span>
-              </div>
-            ) : null}
-            />
               {bookingInfo}
               <p className={css.smallPrint}>
                 <FormattedMessage
