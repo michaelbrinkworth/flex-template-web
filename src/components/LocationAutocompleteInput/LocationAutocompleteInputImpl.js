@@ -446,7 +446,6 @@ class LocationAutocompleteInputImpl extends Component {
     const {
       autoFocus,
       rootClassName,
-      isCustomClass,
       className,
       iconClassName,
       inputClassName,
@@ -454,7 +453,6 @@ class LocationAutocompleteInputImpl extends Component {
       predictionsAttributionClassName,
       validClassName,
       placeholder,
-      isCustomCss,
       input,
       meta,
       inputRef,
@@ -482,9 +480,8 @@ class LocationAutocompleteInputImpl extends Component {
     const renderPredictions = this.state.inputHasFocus;
 
     return (
-      
-      <div className={[rootClass, isCustomCss ? 'customHeights': '']} style={{ minWidth:'300px'}} >
-        <div className={[rootClass, isCustomCss ? 'customHeights': '']}>
+      <div className={rootClass}>
+        <div className={iconClass}>
           {this.state.fetchingPlaceDetails ? (
             <IconSpinner className={css.iconSpinner} />
           ) : (
@@ -494,7 +491,6 @@ class LocationAutocompleteInputImpl extends Component {
         <input
           className={inputClass}
           type="search"
-          style={{ height : isCustomCss ? '45px': null }}
           autoComplete="off"
           autoFocus={autoFocus}
           placeholder={placeholder}

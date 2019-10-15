@@ -2,8 +2,6 @@ import React from 'react';
 import { compose } from 'redux';
 import { object, string, bool, number, func, shape } from 'prop-types';
 import { FormattedMessage, injectIntl, intlShape } from '../../util/reactIntl';
-import { TopbarSearchForm } from '../../forms';
-import config from '../../config';
 import classNames from 'classnames';
 import { withRouter } from 'react-router-dom';
 import omit from 'lodash/omit';
@@ -102,16 +100,16 @@ const SearchFiltersComponent = props => {
   });
 
   const initialTypes = typesFilter
-   ? initialValues(urlQueryParams, typesFilter.paramName)
-   : null;
+    ? initialValues(urlQueryParams, typesFilter.paramName)
+    : null;
 
   const initialCategory = categoryFilter
     ? initialValue(urlQueryParams, categoryFilter.paramName)
     : null;
 
-  const initialSubCategory = subCategoryFilter
-    ? initialValue(urlQueryParams, subCategoryFilter.paramName)
-    : null;
+    const initialSubCategory = subCategoryFilter
+      ? initialValue(urlQueryParams, subCategoryFilter.paramName)
+      : null;
 
   const initialPriceRange = priceFilter
     ? initialPriceRangeValue(urlQueryParams, priceFilter.paramName)
@@ -176,21 +174,6 @@ const SearchFiltersComponent = props => {
     history.push(createResourceLocatorString('SearchPage', routeConfiguration(), {}, queryParams));
   };
 
-  const handleSubmit = values => {
-    const { currentSearchParams } = props;
-    const { search, selectedPlace } = values.location;
-    const { history } = props;
-    const { origin, bounds } = selectedPlace;
-    const originMaybe = config.sortSearchByDistance ? { origin } : {};
-    const searchParams = {
-      ...currentSearchParams,
-      ...originMaybe,
-      address: search,
-      bounds,
-    };
-    history.push(createResourceLocatorString('SearchPage', routeConfiguration(), {}, searchParams));
-  };
-
   const categoryFilterElement = categoryFilter ? (
     <SelectSingleFilter
       urlParam={categoryFilter.paramName}
@@ -214,6 +197,7 @@ const SearchFiltersComponent = props => {
       contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
     />
   ) : null;
+
 
   const typesFilterElement = typesFilter ? (
     <SelectMultipleFilter
@@ -253,16 +237,6 @@ const SearchFiltersComponent = props => {
       />
     ) : null;
 
-  const locationFilter = (
-    <TopbarSearchForm
-      onSubmit={handleSubmit}
-      initialValues={false}
-      isMobile={false}
-      isCustomCss={true}
-      contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
-    />
-  );
-
   const keywordFilterElement =
     keywordFilter && keywordFilter.config.active ? (
       <KeywordFilter
@@ -296,13 +270,12 @@ const SearchFiltersComponent = props => {
   ) : null;
   return (
     <div className={classes}>
-      <div className={[css.filters]} style={{display: 'flex'}}>
+      <div className={css.filters}>
         {categoryFilterElement}
         {subCategoryFilterElement}
         {typesFilterElement}
         {priceFilterElement}
         {dateRangeFilterElement}
-        {locationFilter}
         {keywordFilterElement}
         {toggleSearchFiltersPanelButton}
       </div>

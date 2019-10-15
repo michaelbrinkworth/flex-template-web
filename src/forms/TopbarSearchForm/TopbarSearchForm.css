@@ -131,7 +131,7 @@
 
 .mobilePredictions {
   position: absolute;
-  /* top: calc(var(--TopbarSearchForm_inputHeight) - var(--TopbarSearchForm_bottomBorder)); */
+  top: calc(var(--TopbarSearchForm_inputHeight) - var(--TopbarSearchForm_bottomBorder));
   left: 0;
   min-height: calc(100vh - var(--TopbarSearchForm_mobilePredictionTop));
   width: 100%;
@@ -161,10 +161,10 @@
   border-bottom-right-radius: var(--borderRadius);
   box-shadow: var(--boxShadowPopup);
   z-index: calc(var(--zIndexPopup) + 1);
-  /* margin-top:55px; */
-  /* margin-top: calc(
+
+  margin-top: calc(
     var(--topbarHeightDesktop) - var(--TopbarSearchForm_inputHeight) +
       var(--TopbarSearchForm_bottomBorder)
-  ); */
+  );
   max-width: 434px;
 }
