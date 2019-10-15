@@ -22,6 +22,7 @@ import { propTypes } from '../../util/types';
 import css from './SearchFiltersMobile.css';
 
 const RADIX = 10;
+const MODAL_BREAKPOINT = 768; // Search is in modal on mobile layout
 
 class SearchFiltersMobileComponent extends Component {
   constructor(props) {
@@ -302,12 +303,12 @@ class SearchFiltersMobileComponent extends Component {
           initialValues={initialKeyword}
         />
       ) : null;
-
+    
     return (
       <div>
-        <div className={css.cusNav}>
+        {(window && window.innerWidth < MODAL_BREAKPOINT ) ? (<div className={css.cusNav}>
           <CustomSearchForm onSubmit={this.handleKeyword} />
-        </div>
+        </div>) : null}
         <div className={classes}>
           <div className={css.searchResultSummary}>
             {listingsAreLoaded && resultsCount > 0 ? resultsFound : null}
