@@ -365,8 +365,12 @@ class SearchFiltersMobileComponent extends Component {
           </div>
 
           <div className={css.buttons}>
-            <Button rootClassName={filtersButtonClasses} onClick={this.openFilters}>
+          <Button rootClassName={filtersButtonClasses} onClick={this.openFilters}>
               <FormattedMessage id="SearchFilters.filtersButtonLabel" className={css.mapIconText} />
+            </Button>
+            <div className={css.mapIcon} onClick={onMapIconClick}>
+              <FormattedMessage id="SearchFilters.openMapView" className={css.mapIconText} />
+            </div>
           {this.state.isFiltersOpenOnMobile ? (
             <div className={css.filtersWrapper}>
               {/* {keywordFilterElement} */}
@@ -383,9 +387,7 @@ class SearchFiltersMobileComponent extends Component {
               {showListingsLabel}
 
             </Button>
-            <div className={css.mapIcon} onClick={onMapIconClick}>
-              <FormattedMessage id="SearchFilters.openMapView" className={css.mapIconText} />
-            </div>
+            
           </div>
           <ModalInMobile
             id="SearchFiltersMobile.filters"
@@ -404,9 +406,9 @@ class SearchFiltersMobileComponent extends Component {
             </div>
             {this.state.isFiltersOpenOnMobile ? (
               <div className={css.filtersWrapper}>
-                {keywordFilterElement}
                 {categoryFilterElement}
                 {typesFilterElement}
+                {locationFilter}
                 {priceFilterElement}
                 {dateRangeFilterElement}
               </div>
@@ -419,6 +421,7 @@ class SearchFiltersMobileComponent extends Component {
             </div>
           </ModalInMobile>
         </div>
+      </div>
       </div>
     );
   }
