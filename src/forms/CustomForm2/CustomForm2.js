@@ -181,7 +181,6 @@ class KeywordFilter2 extends Component {
           </div>
           <FieldTextInput
             name={name}
-            
             id={`${id}-input`}
             style={{width:'100%'}}
             isUncontrolled
