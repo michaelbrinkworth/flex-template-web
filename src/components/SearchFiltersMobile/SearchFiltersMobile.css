@@ -133,12 +133,12 @@
   border-radius: 3px;
 }
 .cusNav{
-  width: 60vw;
-  padding: 0.6rem;
-  margin: 20px auto;
+  width: 80vw;
+  padding: 0.1rem;
+  margin: 0 auto;
   color: #4a4a4a;
-  border-width: 1px;
+  /* border-width: 1px;
   border-style: solid;
   border-color: #e7e7e7;
-  border-radius: 4px;
+  border-radius: 4px; */
 }

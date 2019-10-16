@@ -47,21 +47,22 @@ class FilterPlainComponent extends Component {
       initialValues,
       keepDirtyOnReinitialize,
       contentPlacementOffset,
+      isTwo
     } = this.props;
     const classes = classNames(rootClassName || css.root, className);
 
     const labelClass = isSelected ? css.filterLabelSelected : css.filterLabel;
 
     return (
-      <div className={classes}>
-        <div className={labelClass}>
+      <div className={ !isTwo ? classes : ''}>
+        {!isTwo ? (<div className={labelClass}>
           <button type="button" className={css.labelButton} onClick={this.toggleIsOpen}>
             <span className={labelClass}>{label}</span>
           </button>
           <button type="button" className={css.clearButton} onClick={this.handleClear}>
             <FormattedMessage id={'FilterPlain.clear'} />
           </button>
-        </div>
+        </div>) : null}
         <div
           id={id}
           className={classNames(plainClassName, css.plain, { [css.isOpen]: this.state.isOpen })}
@@ -77,7 +78,7 @@ class FilterPlainComponent extends Component {
             initialValues={initialValues}
             keepDirtyOnReinitialize={keepDirtyOnReinitialize}
           >
-            {children}
+            { children ? children : null}
           </FilterForm>
         </div>
       </div>
