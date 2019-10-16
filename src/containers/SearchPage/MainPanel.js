@@ -39,6 +39,7 @@ class MainPanel extends Component {
       showAsModalMaxWidth,
       primaryFilters,
       secondaryFilters,
+      updateTypes
     } = this.props;
 
     const isSearchFiltersPanelOpen = !!secondaryFilters && this.state.isSearchFiltersPanelOpen;
@@ -83,8 +84,13 @@ class MainPanel extends Component {
           searchInProgress={searchInProgress}
           searchListingsError={searchListingsError}
           onManageDisableScrolling={onManageDisableScrolling}
+
+          updateTypes={updateTypes}
+
           onMapIconClick={onMapIconClick}
+
           {...searchFiltersPanelProps}
+          {...extractKeys(primaryFilters)}
           {...primaryFilters}
         />
         <SearchFiltersMobile
@@ -104,6 +110,7 @@ class MainPanel extends Component {
           selectedFiltersCount={selectedFiltersCount}
           {...primaryFilters}
           {...secondaryFilters}
+          currentSearchParams
         />
         {isSearchFiltersPanelOpen ? (
           <div className={classNames(css.searchFiltersPanel)}>
@@ -170,6 +177,15 @@ MainPanel.propTypes = {
   showAsModalMaxWidth: number.isRequired,
   primaryFilters: objectOf(propTypes.filterConfig),
   secondaryFilters: objectOf(propTypes.filterConfig),
+};
+
+const extractKeys = obj => {
+  let returnedObject = {};
+  Object.keys(obj).forEach(k => {
+    if (k === 'keywordFilter') return;
+    returnedObject[k] = obj[k];
+  });
+  return returnedObject;
 };
 
 export default MainPanel;
