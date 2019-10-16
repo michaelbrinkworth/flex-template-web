@@ -306,20 +306,20 @@ export const fetchTransaction = (id, txRole) => (dispatch, getState, sdk) => {
           include: ['author', 'author.profileImage', 'images'],
           ...IMAGE_VARIANTS,
         });
-      } else {
-        return response;
-      }
-    })
-    .then(response => {
-      dispatch(addMarketplaceEntities(txResponse));
-      dispatch(addMarketplaceEntities(response));
-      dispatch(fetchTransactionSuccess(txResponse));
+    } else {
       return response;
-    })
-    .catch(e => {
-      dispatch(fetchTransactionError(storableError(e)));
-      throw e;
-    });
+    }
+  })
+  .then(response => {
+    dispatch(addMarketplaceEntities(txResponse));
+    dispatch(addMarketplaceEntities(response));
+    dispatch(fetchTransactionSuccess(txResponse));
+    return response;
+  })
+  .catch(e => {
+    dispatch(fetchTransactionError(storableError(e)));
+    throw e;
+  });
 };
 
 export const acceptSale = id => (dispatch, getState, sdk) => {

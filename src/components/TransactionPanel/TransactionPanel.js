@@ -33,7 +33,6 @@ import { SendMessageForm } from '../../forms';
 import config from '../../config';
 
 // These are internal components that make this file more readable.
-import InvalidPriceMessageMaybe from './InvalidPriceMessageMaybe';
 import AddressLinkMaybe from './AddressLinkMaybe';
 import BreakdownMaybe from './BreakdownMaybe';
 import DetailCardHeadingsMaybe from './DetailCardHeadingsMaybe';
@@ -363,23 +362,15 @@ export class TransactionPanelComponent extends Component {
               listingDeleted={listingDeleted}
             />
 
-
-
             <div className={css.bookingDetailsMobile}>
-      <AddressLinkMaybe
-        rootClassName={css.addressMobile}
-        location={location}
-        geolocation={geolocation}
-        showAddress={stateData.showAddress}
-      />
-      <BreakdownMaybe transaction={currentTransaction} transactionRole={transactionRole} />
-      <InvalidPriceMessageMaybe
-        transaction={currentTransaction}
-        listing={currentListing}
-        transactionRole={transactionRole}
-        intl={intl}
-      />
-    </div>
+              <AddressLinkMaybe
+                rootClassName={css.addressMobile}
+                location={location}
+                geolocation={geolocation}
+                showAddress={stateData.showAddress}
+              />
+              <BreakdownMaybe transaction={currentTransaction} transactionRole={transactionRole} />
+            </div>
 
             {savePaymentMethodFailed ? (
               <p className={css.genericError}>
@@ -460,22 +451,6 @@ export class TransactionPanelComponent extends Component {
                 transaction={currentTransaction}
                 transactionRole={transactionRole}
               />
-              
-              <div className={css.bookingDetailsMobile}>
-        <AddressLinkMaybe
-          rootClassName={css.addressMobile}
-          location={location}
-          geolocation={geolocation}
-          showAddress={stateData.showAddress}
-        />
-        <BreakdownMaybe transaction={currentTransaction} transactionRole={transactionRole} />
-        <InvalidPriceMessageMaybe
-          transaction={currentTransaction}
-          listing={currentListing}
-          transactionRole={transactionRole}
-          intl={intl}
-        />
-      </div>
 
               {stateData.showSaleButtons ? (
                 <div className={css.desktopActionButtons}>{saleButtons}</div>
