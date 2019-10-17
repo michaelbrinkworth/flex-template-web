@@ -6,7 +6,7 @@ console.log(logo); // /logo.84287d09.png
 
 function IconLogo() {
   // Import result is the URL of your image
-  return <img src={logo} alt="Logo" width="100" height="130" />;
+  return <img src={logo} alt="Logo" width="100" height="50" />;
 
 }
 

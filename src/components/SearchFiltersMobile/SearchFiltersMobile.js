@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import { FormattedMessage, injectIntl, intlShape } from '../../util/reactIntl';
 import { withRouter } from 'react-router-dom';
 import omit from 'lodash/omit';
-import config from '../../config';
 
 import routeConfiguration from '../../routeConfiguration';
 import { parseDateFromISO8601, stringifyDateToISO8601 } from '../../util/dates';
@@ -18,10 +17,8 @@ import {
   SelectMultipleFilter,
   BookingDateRangeFilter,
 } from '../../components';
-
 import CustomSearchForm from '../../forms/CustomForm/CustomForm';
-import { TopbarSearchForm } from '../../forms';
-import { parse } from '../../util/urlHelpers';
+import KeyWordFilter2 from '../../forms/CustomForm2/CustomForm2';
 import { propTypes } from '../../util/types';
 import css from './SearchFiltersMobile.css';
 
@@ -44,7 +41,6 @@ class SearchFiltersMobileComponent extends Component {
     this.handleKeyword = this.handleKeyword.bind(this);
     this.initialValue = this.initialValue.bind(this);
     this.initialValues = this.initialValues.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
     this.initialPriceRangeValue = this.initialPriceRangeValue.bind(this);
     this.initialDateRangeValue = this.initialDateRangeValue.bind(this);
   }
@@ -188,21 +184,6 @@ class SearchFiltersMobileComponent extends Component {
     return initialValues;
   }
 
-  handleSubmit(values) {
-    const { currentSearchParams } = this.props;
-    const { search, selectedPlace } = values.location;
-    const { history } = this.props;
-    const { origin, bounds } = selectedPlace;
-    const originMaybe = config.sortSearchByDistance ? { origin } : {};
-    const searchParams = {
-      ...currentSearchParams,
-      ...originMaybe,
-      address: search,
-      bounds,
-    };
-    history.push(createResourceLocatorString('SearchPage', routeConfiguration(), {}, searchParams));
-  }
-
   render() {
     const {
       rootClassName,
@@ -221,7 +202,6 @@ class SearchFiltersMobileComponent extends Component {
       dateRangeFilter,
       keywordFilter,
       intl,
-      location,
     } = this.props;
 
     if (this.state.isFiltersOpenOnMobile !== customState) {
@@ -325,63 +305,51 @@ class SearchFiltersMobileComponent extends Component {
         />
       ) : null;
 
-
-    const { mobilemenu, mobilesearch, address, origin, bounds } = parse(location.search, {
-      latlng: ['origin'],
-      latlngBounds: ['bounds'],
-    });
-    const locationFieldsPresent = config.sortSearchByDistance
-      ? address && origin && bounds
-      : address && bounds;
-    const initialSearchFormValues = {
-      location: locationFieldsPresent
-        ? {
-            search: address,
-            electedPlace: { address, origin, bounds },
-          }
-        : null,
-    };
-
-    const locationFilter = (
-      <div style={{ paddingTop: '15px', borderBottom: '#4928D7 2px solid' }}>
-        <span className={css.showSpan}>Location Search</span>
-        <TopbarSearchForm
-          onSubmit={this.handleSubmit}
-          initialValues={initialSearchFormValues}
-          isMobile={false}
-        />
-      </div>
-    );
     return (
       <div>
-        {(window && window.innerWidth < MODAL_BREAKPOINT ) ? (<div className={css.cusNav}>
-          <CustomSearchForm onSubmit={this.handleKeyword} />
-        </div>) : null}
+        {window && window.innerWidth < MODAL_BREAKPOINT ? (
+          <div className={css.cusNav}>
+            {/* <CustomSearchForm
+              id={'SearchFiltersMobile.keywordFilter'}
+              name="keyword"
+              urlParam={keywordFilter.paramName}
+              label={keywordLabel}
+              onSubmit={this.handleKeyword}
+              liveEdit
+              showAsPopup={false}
+              initialValues={initialKeyword}
+            /> */}
+            <KeyWordFilter2
+            id={'SearchFiltersMobile.keywordFilter'}
+            name="keyword"
+            urlParam={keywordFilter.paramName}
+            label={keywordLabel}
+            onSubmit={this.handleKeyword}
+            liveEdit
+            showAsPopup={false}
+            initialValues={initialKeyword}
+            />
+            {/* <KeywordFilter
+              id={'SearchFiltersMobile.keywordFilter'}
+              name="keyword"
+              urlParam={keywordFilter.paramName}
+              label={keywordLabel}
+              onSubmit={this.handleKeyword}
+              liveEdit
+              showAsPopup={false}
+              initialValues={initialKeyword}
+            /> */}
+          </div>
+        ) : null}
         <div className={classes}>
           <div className={css.searchResultSummary}>
             {listingsAreLoaded && resultsCount > 0 ? resultsFound : null}
             {listingsAreLoaded && resultsCount === 0 ? noResults : null}
             {searchInProgress ? loadingResults : null}
           </div>
-
           <div className={css.buttons}>
             <Button rootClassName={filtersButtonClasses} onClick={this.openFilters}>
               <FormattedMessage id="SearchFilters.filtersButtonLabel" className={css.mapIconText} />
-          {this.state.isFiltersOpenOnMobile ? (
-            <div className={css.filtersWrapper}>
-              {/* {keywordFilterElement} */}
-              {categoryFilterElement}
-              {locationFilter}
-              {typesFilterElement}
-              {priceFilterElement}
-              {dateRangeFilterElement}
-            </div>
-          ) : null}
-
-          <div className={css.showListingsContainer}>
-            <Button className={css.showListingsButton} onClick={this.closeFilters}>
-              {showListingsLabel}
-
             </Button>
             <div className={css.mapIcon} onClick={onMapIconClick}>
               <FormattedMessage id="SearchFilters.openMapView" className={css.mapIconText} />
