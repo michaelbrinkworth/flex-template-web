@@ -39,6 +39,8 @@ class MainPanel extends Component {
       showAsModalMaxWidth,
       primaryFilters,
       secondaryFilters,
+      currentSearchParams,
+    
     } = this.props;
 
     const isSearchFiltersPanelOpen = !!secondaryFilters && this.state.isSearchFiltersPanelOpen;
@@ -102,6 +104,7 @@ class MainPanel extends Component {
           onCloseModal={onCloseModal}
           filterParamNames={filterParamNames}
           selectedFiltersCount={selectedFiltersCount}
+          currentSearchParams={urlQueryParams}
           {...primaryFilters}
           {...secondaryFilters}
         />
