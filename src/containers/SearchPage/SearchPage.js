@@ -234,8 +234,9 @@ export class SearchPageComponent extends Component {
             pagination={pagination}
             searchParamsForPagination={parse(location.search)}
             showAsModalMaxWidth={MODAL_BREAKPOINT}
+            updateTypes={this.updateTypes}
             location
-            
+            history
             primaryFilters={{
               categoryFilter: filters.categoryFilter,
               typesFilter: filters.typesFilter,

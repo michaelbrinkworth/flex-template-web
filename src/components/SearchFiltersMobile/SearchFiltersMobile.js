@@ -31,7 +31,12 @@ const MODAL_BREAKPOINT = 768; // Search is in modal on mobile layout
 class SearchFiltersMobileComponent extends Component {
   constructor(props) {
     super(props);
-    this.state = { isFiltersOpenOnMobile: false, initialQueryParams: null };
+    this.customFilters = { paramName: '', options: [] };
+    this.state = {
+      isFiltersOpenOnMobile: false,
+      typesFilter: { paramName: '', options: [] },
+      initialQueryParams: null,
+    };
 
     this.openFilters = this.openFilters.bind(this);
     this.cancelFilters = this.cancelFilters.bind(this);
@@ -203,6 +208,44 @@ class SearchFiltersMobileComponent extends Component {
     history.push(createResourceLocatorString('SearchPage', routeConfiguration(), {}, searchParams));
   }
 
+  componentDidMount() {
+    this.updateTypes(this.props);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps !== this.props) {
+      this.updateTypes(this.props);
+    }
+  }
+
+  updateTypes = props => {
+    if (props.urlQueryParams.pub_category && props.urlQueryParams.pub_types) {
+      const makeChange = () => {
+        this.setState({ new: !this.state.new });
+        this.customFilters = { ...props.typesFilter };
+      };
+      const { pub_category, pub_types } = props.urlQueryParams;
+      if (!pub_category || !pub_types) return;
+      (pub_types === 'Traditional,Open-Air' || pub_types === 'Open-Air,Traditional') &&
+      pub_category === 'Photo Booth'
+        ? this.filterTypes(props.typesFilter)
+        : makeChange();
+    } else {
+      this.customFilters = props.typesFilter;
+      this.setState({ customFilters: props.typesFilter });
+    }
+    return;
+  };
+
+  filterTypes = types => {
+    const newTypes = types.options.filter(
+      typ => typ.key === 'Open-Air' || typ.key === 'Traditional'
+    );
+    let typesFilter = { paramName: 'pub_types', options: [...newTypes] };
+    this.setState({ new: true });
+    this.customFilters = typesFilter;
+  };
+
   render() {
     const {
       rootClassName,
@@ -216,13 +259,14 @@ class SearchFiltersMobileComponent extends Component {
       onManageDisableScrolling,
       selectedFiltersCount,
       categoryFilter,
-      typesFilter,
       priceFilter,
       dateRangeFilter,
       keywordFilter,
       intl,
       location
     } = this.props;
+
+    const typesFilter = this.state.typesFilter;
 
     if (this.state.isFiltersOpenOnMobile !== customState) {
       this.openFilters();
@@ -265,17 +309,17 @@ class SearchFiltersMobileComponent extends Component {
 
     const typesLabel = intl.formatMessage({ id: 'SearchFiltersMobile.typesLabel' });
 
-    const initialTypes = this.initialValues(typesFilter.paramName);
+    const initialTypes = this.initialValues(this.customFilters.paramName);
 
     const typesFilterElement = typesFilter ? (
       <SelectMultipleFilter
         id="SearchFiltersMobile.typesFilter"
         name="types"
-        urlParam={typesFilter.paramName}
+        urlParam={this.customFilters.paramName}
         label={typesLabel}
         onSubmit={this.handleSelectMultiple}
         liveEdit
-        options={typesFilter.options}
+        options={this.customFilters.options}
         initialValues={initialTypes}
       />
     ) : null;
