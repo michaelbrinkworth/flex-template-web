@@ -66,6 +66,7 @@ class KeywordFilter2 extends Component {
       urlParam,
       intl,
       showAsPopup,
+      isTop,
       ...rest
     } = this.props;
 
@@ -174,7 +175,7 @@ class KeywordFilter2 extends Component {
         urlParam={urlParam}
         {...rest}
       >
-        <div className={css.customInp}>
+        <div className={css.customInp} style={ isTop ? {marginTop:'10px'} : {}}>
           {/* <label>{filterText}</label> */}
           <div style={{marginRight:'8px', marginTop:'-8px'}}>
           <SearchIcon ></SearchIcon>

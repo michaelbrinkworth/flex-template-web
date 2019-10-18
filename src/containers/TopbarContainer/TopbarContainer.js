@@ -27,6 +27,8 @@ export const TopbarContainerComponent = props => {
     sendVerificationEmailInProgress,
     sendVerificationEmailError,
     onResendVerificationEmail,
+    keywordFilter,
+    urlQueryParams,
     ...rest
   } = props;
 
@@ -43,6 +45,8 @@ export const TopbarContainerComponent = props => {
       location={location}
       notificationCount={notificationCount}
       onLogout={onLogout}
+      keywordFilter={keywordFilter}
+      urlQueryParams={urlQueryParams}
       onManageDisableScrolling={onManageDisableScrolling}
       onResendVerificationEmail={onResendVerificationEmail}
       sendVerificationEmailInProgress={sendVerificationEmailInProgress}

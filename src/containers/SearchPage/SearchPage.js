@@ -158,6 +158,7 @@ export class SearchPageComponent extends Component {
       searchParams,
       activeListingId,
       onActivateListing,
+      history
     } = this.props;
     // eslint-disable-next-line no-unused-vars
     const { mapSearch, page, ...searchInURL } = parse(location.search, {
@@ -214,7 +215,10 @@ export class SearchPageComponent extends Component {
           onOpenSearchN={() => {
             this.onOpenMobileModal();
           }}
+          urlQueryParams={validQueryParams}
           className={topbarClasses}
+          history={history}
+          keywordFilter={filters.keywordFilter}
           currentPage="SearchPage"
           currentSearchParams={urlQueryParams}
         />

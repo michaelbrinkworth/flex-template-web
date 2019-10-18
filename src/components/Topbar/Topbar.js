@@ -143,11 +143,14 @@ class TopbarComponent extends Component {
       viewport,
       intl,
       location,
+      history,
+      keywordFilter,
       onManageDisableScrolling,
       onResendVerificationEmail,
       sendVerificationEmailInProgress,
       sendVerificationEmailError,
       showGenericError,
+      urlQueryParams
     } = this.props;
 
     const { mobilemenu, mobilesearch, address, origin, bounds } = parse(location.search, {
@@ -221,9 +224,12 @@ class TopbarComponent extends Component {
             currentPage={currentPage}
             initialSearchFormValues={initialSearchFormValues}
             intl={intl}
+            keywordFilter={keywordFilter}
+            history={history}
             isAuthenticated={isAuthenticated}
             notificationCount={notificationCount}
             onLogout={this.handleLogout}
+            urlQueryParams={urlQueryParams}
             onSearchSubmit={this.handleSubmit}
           />
         </div>
@@ -260,6 +266,7 @@ class TopbarComponent extends Component {
           currentUserHasListings={currentUserHasListings}
           currentUserHasOrders={currentUserHasOrders}
           location={location}
+          keywordFilter={keywordFilter}
           onManageDisableScrolling={onManageDisableScrolling}
           onResendVerificationEmail={onResendVerificationEmail}
           sendVerificationEmailInProgress={sendVerificationEmailInProgress}
