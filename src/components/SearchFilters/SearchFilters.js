@@ -88,10 +88,10 @@ const SearchFiltersComponent = props => {
   }, [urlQueryParams || props.typesFilter]);
 
   const updateTypes = props => {
-    if (props.urlQueryParams.pub_category && props.urlQueryParams.pub_types) {
+    if (props.urlQueryParams.pub_category) {
       const { pub_category, pub_types } = props.urlQueryParams;
-      if (!pub_category || !pub_types) return;
-      (pub_types === 'Traditional,Open-Air' || pub_types === 'Open-Air,Traditional') &&
+      if (!pub_category && !pub_types) return;
+      // (pub_types === 'Traditional,Open-Air' || pub_types === 'Open-Air,Traditional') &&
       pub_category === 'Photo Booth'
         ? filterTypes(props.typesFilter)
         : (typesFilter = setTypes(props.typesFilter));
